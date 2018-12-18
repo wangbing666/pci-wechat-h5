@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>我的医生</title>
+    <% include ../layout/layout %>
+    <link rel="stylesheet" href="<%= _src('/css/basic/basic.min.css') %>">
+    <script src="<%= _src('/lib/validform/Validform_v5.3.2_min.js') %>"></script>
+    <script type="text/javascript">
+      share("<%=_src('')%>") //jssdk分享页面
+    </script>
+</head>
+
+<body ontouchstart>
+<div class="md-consult" style="text-align: center;">
+    <i class="weui-icon-warn weui-icon_msg no-warn"></i>
+    <p class="no-msg">您还没有向医生报到</p>
+    <div onclick="findDoctor()">
+        <button class="btn-finddoc">
+            找医生
+        </button>
+    </div>
+</div>
+</body>
+<style>
+    .no-warn{
+        width: 100px;
+        height: 100px;
+        margin-top: 50px
+    }
+    .no-msg{
+        font-size: 16px;
+        line-height: 30px;
+    }
+    .btn-finddoc{
+        font-size: 16px;
+        height: 40px;
+        width: 90%;
+        background-color: #35B2F2;
+        border-radius: 5px;
+        color: white;
+        border: none;
+        margin-top: 20px;
+    }
+</style>
+<script>
+    function findDoctor() {
+        window.open("<%=_src('/find-doctor')%>?v=" + (new Date().getTime()), '_self')
+    }
+</script>

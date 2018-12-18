@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>讲座报名</title>
+  <% include ../layout/layout %>
+  	
+    <script src="<%=_src('/lib/picker/picker.min.js')%>"></script>
+    <script src="<%=_src('/lib/validform/Validform_v5.3.2_min.js')%>"></script>
+    <link rel="stylesheet" href="<%=_src('/css/lecture/lecture-apply.min.css')%>">
+
+  <script>
+    var jsondata = '<%-JSON.stringify(json)%>';
+  </script>
+</head>
+
+<body>
+	  <div class="lecture-container">
+	    <div class="lecture">
+	      <label>1. 参与者姓名 <span class="name-asterisk">*</span></label>
+	      <input type="text" name="name"  class="name">
+	      <p class="name_info full"></p>
+	    </div>
+	    <div class="lecture">
+	      <label>2. 年龄 <span class="age-asterisk">*</span></label>
+	      <input type="tel" name="age" class="age">
+	      <p class="age_info full"></p>
+	    </div>
+	    <div class="lecture">
+	      <label>3. 性别 <span class="sex-asterisk">*</span></label>
+	      <div class="showPicker">
+	        <span id="showPicker">男</span>
+          <input type="hidden" name="sex" id="sex" value="男">
+	      </div>
+	    </div>
+	    <div class="lecture">
+	      <label>4. 想参加的讲座 <span class="lecture-more-asterisk">*</span></label>
+	      <div class="showPicker">
+	        <span id="showPickerlecture" class="lecture-more"><%=name%></span>
+          <input type="hidden" name="lectureId" id="lecture" value="<%=id%>">
+	      </div>
+	    </div>
+	    <div class="lecture-btn">
+	      <button id="button" class="weui-btn weui-btn_primary"><i class="weui-icon-waiting"></i> 报名</button>
+	    </div>
+
+	    <div class="space Validform_wrong"></div>
+      <% if (errorMessage) { %>
+		    <div id="modalerr">
+		      <div class="weui-mask"></div>
+		      <div class="weui-dialog">
+		      <% if (name) {%>
+		        <div class="weui-dialog__hd"><strong class="weui-dialog__title">错误提示</strong></div>
+		      <%}%>
+		        <div class="weui-dialog__bd">
+		          <%=errorMessage%>
+		        </div>
+		        <div class="weui-dialog__ft">
+		          <a id="closeerr" href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
+		        </div>
+		      </div>
+		    </div>
+  		<%}%>
+	  </div>
+  <script src="<%=_src('/js/lecture/apply.min.js')%>"></script>
+  
+
+</body>
+
+
+</html>

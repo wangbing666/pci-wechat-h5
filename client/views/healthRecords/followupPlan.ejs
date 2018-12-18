@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>随访计划列表</title>
+  <% include ../layout/layout %>
+  <script type="text/javascript">
+    var pathName = "<%=_src('')%>"//获取当前域名
+    var list = JSON.parse('<%-JSON.stringify(json)%>');
+    var share = new share("<%=_src('')%>") //jssdk分享页面
+  </script>
+  <style>
+    body{
+      background: #ebebeb;
+      color: #666;
+    }
+    .weui-cells{
+      margin-top: 0;
+    }
+    .weui-cell_link{
+      color: #666;
+      text-align: center;
+    }
+    .no_follow_up_plan{
+      padding-top:10px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body ontouchstart>
+  <div class="follow_up_plan">
+    <% if (status === false) { %>
+      <div id="dialogs2">
+        <div class="js_dialog" id="iosDialog2" style="display: block;">
+            <div class="weui-mask"></div>
+            <div class="weui-dialog">
+                <div class="weui-dialog__bd">暂无医生为您制定随访计划</div>
+                <div class="weui-dialog__ft">
+                    <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">知道了</a>
+                </div>
+            </div>
+        </div>
+      </div>
+    <% } else {%>
+      <div class="weui-cells" id="follow_up_list">
+        <% if (myFlupList.length > 10) { %>
+          <% for (var i = 0; i < 10; i++) { %>
+            <a class="weui-cell weui-cell_access" href="<%=_src('/followUpDetail?doctorId=')%><%=myFlupList[i].doctorId%>">
+              <div class="weui-cell__bd">
+                  <p><%=myFlupList[i].planDate%></p>
+              </div>
+              <div class="weui-cell__ft">
+                <%=myFlupList[i].name%>
+              </div>
+            </a>
+          <% } %>
+        <% } else { %>
+          <% for (var i = 0; i < myFlupList.length; i++) { %>
+            <a class="weui-cell weui-cell_access" href="<%=_src('/followUpDetail?doctorId=')%><%=myFlupList[i].doctorId%>">
+              <div class="weui-cell__bd">
+                  <p><%=myFlupList[i].planDate%></p>
+              </div>
+              <div class="weui-cell__ft">
+                <%=myFlupList[i].name%>
+              </div>
+            </a>
+          <% } %>
+        <% } %>  
+      </div>
+      <div class="weui-cells">
+        <% if (myFlupList.length > 10) { %>
+          <a href="javascript:void(0);" class="weui-cell weui-cell_access weui-cell_link">
+            <div class="weui-cell__bd" id="load_more">加载更多</div>
+          </a>
+        <% } %>
+      </div>
+    <% } %>
+  </div>
+</body>
+<script>
+$(document).ready(function(){
+  var followList = $("#follow_up_list");
+  var count = 9;
+  $("#load_more").on('click', function() {
+    if (list.length - count >= 10){
+      for (var i = 0; i < 10; i++) {
+        followList.append("<a class='weui-cell weui-cell_access' href='<%=_src('/followUpDetail?doctorId=')%>'" + list[(i+count)].doctorId + "><div class='weui-cell__bd'><p>" + list[(i+count)].planDate + "</p></div><div class='weui-cell__ft'>" + list[(i+count)].name + "</div></a>")
+      }
+      count = count + 10;
+    } else {
+      for (var i = 0; i < list.length; i++) {
+        followList.append("<a class='weui-cell weui-cell_access' href='<%=_src('/followUpDetail?doctorId=')%>'" + list[i+count].doctorId + "><div class='weui-cell__bd'><p>" + list[i+count].planDate + "</p></div><div class='weui-cell__ft'>" + list[i+count].name + "</div></a>")
+      }
+    }
+  });
+  
+  $('#iosDialog2').on('click', '.weui-dialog__btn', function(){
+    $('#dialogs2').fadeOut(0);
+    wx.closeWindow();
+  });
+})
+</script>
+</html>

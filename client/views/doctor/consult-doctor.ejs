@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>咨询医生</title>
+    <% include ../layout/layout %>
+    <link rel="stylesheet" href="<%= _src('/css/basic/basic.min.css') %>">
+    <script src="<%= _src('/lib/validform/Validform_v5.3.2_min.js') %>"></script>
+    <script type="text/javascript">
+      share("<%=_src('')%>") //jssdk分享页面
+    </script>
+</head>
+
+<body ontouchstart>
+<div class="md-consult" style="text-align: center;">
+    <i class="weui-icon-warn weui-icon_msg consult-warn"></i>
+    <p class="consult-msg">在线咨询功能尚未在微信开放</p>
+    <p class="consult-down">请下载APP体验完整咨询功能</p>
+    <div onclick="goDownload()">
+        <button class="btn-load">
+            立即下载
+        </button>
+    </div>
+</div>
+</body>
+</html>
+<script>
+    function goDownload() {
+        window.location.href = 'http://a.app.qq.com/o/simple.jsp?pkgname=com.wondersgroup.hs.pci.patient&fromcase=40003'
+    }
+</script>
+<style>
+    .consult-warn{
+        width: 100px;
+        height: 100px;
+        margin-top: 50px;
+    }
+    .consult-msg{
+        font-size: 16px;
+        line-height: 30px;
+    }
+    .consult-down{
+        font-size: 14px;
+        color: #888;
+        line-height: 30px;
+    }
+    .btn-load{
+        font-size: 16px;
+        height: 40px;
+        width: 90%;
+        background-color: #35B2F2;
+        border-radius: 5px;
+        color: white;
+        border: none;
+        margin-top: 20px;
+    }
+</style>

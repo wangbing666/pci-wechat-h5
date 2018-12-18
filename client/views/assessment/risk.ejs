@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>弗明汉心脏风险评估</title>
+  <% include ../layout/layout %>
+    <link rel="stylesheet" href="<%=_src('/css/assessment/assessment.min.css')%>">
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script>
+    var url = '<%-url%>';
+    var pathName = "<%=_src('')%>"//获取当前Url
+    wxconfig();
+      //ajax请求config配置参数
+    function wxconfig() {
+      $.ajax({
+       type: "get",
+       url: pathName+"/signature",
+       data: {url:location.href},
+       success: function(msg){
+          //配置微信JS-SDK
+        wx.config({
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: msg.appId, // 必填，公众号的唯一标识
+            timestamp:msg.timestamp , // 必填，生成签名的时间戳
+            nonceStr: msg.nonceStr, // 必填，生成签名的随机串
+            signature: msg.signature,// 必填，签名，见附录1
+            jsApiList: ['onMenuShareAppMessage','onMenuShareTimeline'],// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        });
+       },
+       error:function(err){
+          console.log(err);
+       }
+      });
+    };
+    wx.ready(function () {
+    // 在这里调用 API
+    // 分享给朋友
+      wx.onMenuShareAppMessage({
+          title: '十年心脏病风险预测', // 分享标题
+          desc: "我正在做心脏风险自测，你也赶紧来测一测吧！", // 分享描述
+          link: 'http://pci.qcxin.com/pci-wechat-h5/assessment/risk', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          imgUrl: 'http://pci.qcxin.com/pci-wechat-h5/image/assessment/331506325982_.pic_hd.jpg', // 分享图标
+          success: function () { 
+              // 用户确认分享后执行的回调函数
+          },
+          cancel: function () { 
+              // 用户取消分享后执行的回调函数
+          },
+      });
+      // 分享到朋友圈
+      wx.onMenuShareTimeline({
+          title: '十年心脏病风险预测', // 分享标题
+          link: 'http://pci.qcxin.com/pci-wechat-h5/assessment/risk', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          imgUrl: 'http://pci.qcxin.com/pci-wechat-h5/image/assessment/331506325982_.pic_hd.jpg', // 分享图
+          success: function () {
+              // 用户确认分享后执行的回调函数
+          },
+          cancel: function () { 
+              // 用户取消分享后执行的回调函数
+          }
+      });  
+    });
+    </script>
+</head>
+
+<body ontouchstart>
+  <p class="risk-top">全程心管家用弗明汉心脏病研究（Framingham Heart Study）又名十年心脏病风险评估，是根据胆固醇水平和非胆固醇因素计算20岁到79岁个体未来十年冠心病发作几率的方法。</p>
+  <div class="showPicker">1 您的性别
+    <span id="showSex"></span>
+  </div>
+  <div class="showPicker">2 您的年龄
+    <span id="showAge"></span>
+  </div>
+  <div class="showPicker">3 您是否吸烟
+    <span id="showSmoke"></span>
+  </div>
+  <div class="showPicker">4 总胆固醇 (mmol/L)
+    <span id="showCholesterol"></span>
+  </div>
+  <div  class="showPicker">5 高密度脂蛋白 (mmol/L)
+    <span id="showGoodCholesterol"></span>
+  </div>
+  <div class="showPicker">6 高压水平 (mmol/L)
+    <span id="showPressure"></span>
+  </div>
+  <div class="showPicker" style="border-bottom: 1px solid #dcdcdc;">7 您是否服用过降压药
+    <span id="showHypotensor"></span>
+  </div>
+  <input id="title" type="label" name="title" class="display">
+  <div class="account-btn" style="margin-bottom: 20px;">
+    <button type="button" onclick="submit()" id="riskbtn" class="weui-btn" disabled style="background:#ccc;">提交</button>
+  </div>
+  <div id="modal" style="display: none">
+    <div class="weui-mask"></div>
+    <div class="weui-dialog">
+      <div class="weui-dialog__hd"><strong class="weui-dialog__title">提示信息</strong></div>
+      <div class="weui-dialog__bd" id="message">
+      </div>
+      <div class="weui-dialog__ft">
+        <a id="close" href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    var HDL; //高密度脂蛋白
+    var TC; //总胆固醇
+    var age; //年龄
+    var cure; //是否治疗 0否 1是 
+    var sex; //性别
+    var smoke; //是否吸烟 0否 1是 
+    var systolic; //血压
+    $("#showSex").on('click', function() {
+      weui.picker([
+        {
+          label: '男',
+          value: 0,
+        },{
+          label: '女',
+          value: 1
+        }], {
+          defaultValue: [0],
+         onChange: function (result) {
+             // console.log(result)
+         },
+         onConfirm: function (result) {
+           if (result[0]) {
+            sex = result[0].value
+            $("#showSex").html(result[0].label)
+            ifFull()
+           } 
+         },
+      });
+      
+     })
+
+    $("#showAge").on('click', function() {
+      weui.picker([
+        {
+          label: '20-34',
+          value: 0
+        }, {
+          label: '35-39',
+          value: 1
+        }, {
+          label: '40-44',
+          value: 2
+        }, {
+          label: '45-49',
+          value: 3
+        }, {
+          label: '50-54',
+          value: 4
+        }, {
+          label: '55-59',
+          value: 5
+        }, {
+          label: '60-64',
+          value: 6
+        }, {
+          label: '65-69',
+          value: 7
+        }, {
+          label: '70-74',
+          value: 8
+        }, {
+          label: '75-79',
+          value: 9
+        }], {
+         defaultValue: [0],
+         onChange: function (result) {
+             // console.log(result)
+         },
+         onConfirm: function (result) {
+          if (result[0]) {
+            age = result[0].value
+            $("#showAge").html(result[0].label)
+            ifFull()
+          }
+         },
+      });
+     })
+
+    $("#showSmoke").on('click', function() {
+      weui.picker([
+        {
+          label: '否',
+          value: 0
+        }, {
+          label: '是',
+          value: 1
+        }], {
+         defaultValue: [0],
+         onChange: function (result) {
+             // console.log(result)
+         },
+         onConfirm: function (result) {
+          if (result[0]) {
+            smoke = result[0].value
+            $("#showSmoke").html(result[0].label)
+            ifFull()
+          }
+         },
+      });
+     })
+
+    $("#showCholesterol").on('click', function() {
+      weui.picker([
+        {
+          label: '<4',
+          value: 0
+        }, {
+          label: '4-4.9',
+          value: 1
+        }, {
+          label: '5-5.9',
+          value: 2
+        }, {
+          label: '6-6.9',
+          value: 3
+        }, {
+          label: '≥7',
+          value: 4
+        }], {
+         defaultValue: [0],
+         onChange: function (result) {
+             // console.log(result)
+         },
+         onConfirm: function (result) {
+          if (result[0]) {
+            TC = result[0].value
+            $("#showCholesterol").html(result[0].label)
+            ifFull()
+          }
+         },
+      });
+    })
+
+    $("#showGoodCholesterol").on('click', function() {
+      weui.picker([
+        {
+          label: '<1',
+          value: 0
+        }, {
+          label: '1-1.29',
+          value: 1
+        }, {
+          label: '1.3-1.59',
+          value: 1
+        }, {
+          label: '≥1.6',
+          value: 1
+        }], {
+         defaultValue: [0],
+         onChange: function (result) {
+             // console.log(result)
+         },
+         onConfirm: function (result) {
+          if (result[0]) {
+            HDL = result[0].value
+            $("#showGoodCholesterol").html(result[0].label)
+            ifFull()
+          }
+         },
+      });
+    })
+
+    $("#showPressure").on('click', function() {
+      weui.picker([
+        {
+          label: '<120',
+          value: 0
+        }, {
+          label: '120-129',
+          value: 1
+        }, {
+          label: '130-139',
+          value: 2
+        }, {
+          label: '140-159',
+          value: 3
+        }, {
+          label: '160+',
+          value: 4
+        }], {
+         defaultValue: [0],
+         onChange: function (result) {
+             // console.log(result)
+         },
+         onConfirm: function (result) {
+          if (result[0]) {
+            cure = result[0].value
+            $("#showPressure").html(result[0].label)
+            ifFull()
+          }
+         },
+      });
+    })
+
+    $("#showHypotensor").on('click', function() {
+      weui.picker([
+        {
+          label: '否',
+          value: 0
+        }, {
+          label: '是',
+          value: 1
+        }], {
+         defaultValue: [0],
+         onChange: function (result) {
+             // console.log(result)
+         },
+         onConfirm: function (result) {
+          if (result[0]) {
+            systolic = result[0].value
+            $("#showHypotensor").html(result[0].label)
+            ifFull()
+          }
+         },
+      });
+    })
+
+    function ifFull() {
+      if (HDL != undefined && TC != undefined && age != undefined && cure != undefined && sex != undefined && smoke != undefined && systolic != undefined) {
+        $('#riskbtn').removeAttr('disabled');
+        $('#riskbtn').css('background', '#35B2F2');
+      }
+    }
+
+    function submit() {
+      var list = {
+        "HDL": HDL,
+        "TC": TC,
+        "age": age,
+        "cure": cure,
+        "sex": sex,
+        "smoke": smoke,
+        "systolic": systolic
+      };
+      $.ajax({
+        url: url,
+        type: "POST",
+        data: JSON.stringify(list),
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function(data) {
+          if (data.code === 0) {
+            window.open(window.location.pathname + "/risk?v=" + (new Date().getTime()), '_self');
+          } else {
+            var msg;
+            if (data.msg) {
+              msg = data.msg;
+            } else {
+              msg = '提交失败！';
+            }
+            $('#message').text(msg);
+            $('#modal').css('display', 'block');
+          }
+        },
+        error: function() {
+          $('#message').text('请求失败！');
+          $('#modal').css('display', 'block');
+        }
+      });
+    }
+    $('#close').on('click', function() {
+      $('#modal').css('display', 'none');
+    });
+  </script>
+</body>
+
+</html>

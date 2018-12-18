@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>实名认证</title>
+  <% include ../layout/layout %>
+  <script type="text/javascript">
+   var share = new share("<%=_src('')%>") //jssdk分享页面
+  </script>
+  <style>
+    body{
+      background: #ebebeb;
+      color: #666;
+    }
+    .authlist_hot{
+      display: inline-block;
+      text-align: center;
+      margin-left: 10px;
+      background-size: cover;
+      color: #fff;
+      font-size: 14px;
+      padding: 0 8px;
+    }
+    .weui-cell__hd{
+      width: 25px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body ontouchstart>
+  <div class="authlist">
+    <div class="weui-cells">
+      <a class="weui-cell weui-cell_access" href="<%=_src('/authphone')%>?userName=<%=userName%>">
+          <div class="weui-cell__hd"><img src="<%=_src('/image/realNameAuth/手机@3x.png')%>" alt="" style="width:15px;margin:0 auto;display:block"></div>
+          <div class="weui-cell__bd">
+              <p>手机号认证<span class="authlist_hot" style="background-image: url(<%=_src('/image/realNameAuth/推荐@3x.png')%>)">推荐</span></p>
+          </div>
+          <div class="weui-cell__ft"></div>
+      </a>
+      <a class="weui-cell weui-cell_access" href="<%=_src('/authcard')%>?userName=<%=userName%>">
+          <div class="weui-cell__hd"><img src="<%=_src('/image/realNameAuth/证件@3x.png')%>" alt="" style="width:20px;margin:0 auto;display:block"></div>
+          <div class="weui-cell__bd">
+              <p>手持证照认证</p>
+          </div>
+          <div class="weui-cell__ft"></div>
+      </a>
+    </div>
+  </div>
+</body>
+<script>
+$(document).ready(function(){
+
+})
+  
+</script>
+</html>

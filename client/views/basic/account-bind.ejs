@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>家庭账号绑定</title>
+  <% include ../layout/layout %>
+    <link rel="stylesheet" href="<%=_src('/css/basic/account-bind.min.css')%>">
+</head>
+
+<body ontouchstart>
+  <div class="container">
+    <%for(let i = 0; i < content.length; i++) {%>
+      <div class="cell">
+      <div class="cell-image">
+        <img src="<%=content[i].avatarUrl%>">
+      </div>
+      <div class="cell-content">
+        <p><%=content[i].name%></p>
+      </div>
+      <div class="cell-right">
+        <%if(content[i].status == 0) {%>
+          <span class="red">申请中</span>
+        <%} else if(content[i].status == 1) {%>
+          <span>已添加</span>
+        <%} else if(content[i].status == 2) {%>
+          <span>已拒绝</span>
+        <%}%>
+      </div>
+      </div>
+    <%}%>
+    <div class="addition">
+      <a class="add-btn" href="<%=_src('/family/add')%>"></a>
+      <span>添加新家庭成员</span>
+    </div>
+  </div>
+</body>
+<script>
+  var share = new share("<%= _src('') %>") //jssdk分享页面
+</script>
+</html>

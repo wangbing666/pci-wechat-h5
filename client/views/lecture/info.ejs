@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>报名信息</title>
+  <% include ../layout/layout %>
+  <link rel="stylesheet" href="<%=_src('/css/lecture/info.min.css')%>">
+</head>
+
+<body>
+    <div class="weui-search-bar" id="searchBar">
+          <div class="weui-search-bar__form">
+              <div class="weui-search-bar__box">
+                  <i class="weui-icon-search"></i>
+                  <input type="search" class="weui-search-bar__input" id="searchInput" placeholder="可搜索讲座名称或讲座关键字" required/>
+                  <a href="javascript:" class="weui-icon-clear" id="searchClear"></a>
+              </div>
+              <label class="weui-search-bar__label" id="searchText">
+                  <i class="weui-icon-search"></i>
+                  <span>搜索讲座</span>
+              </label>
+          </div>
+          <a href="javascript:" class="weui-search-bar__cancel-btn" id="searchCancel">取消</a>
+    </div>
+    <div id="modal" style="display: none">
+        <div class="weui-mask"></div>
+        <div class="weui-dialog">
+            <div class="weui-dialog__hd"><strong class="weui-dialog__title">提示信息</strong></div>
+            <div class="weui-dialog__bd" id="message">
+            </div>
+            <div class="weui-dialog__ft">
+                <a id="close" href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
+            </div>
+        </div>
+    </div>
+    <% data.forEach(function(data){ %>  
+        <div class="info-container">
+           <div class="weui-panel weui-panel_access">
+                <div class="weui-panel__hd ovelflow">
+                  <div class="left"><p id="apply-name<%=data.joinId%>"><%=data.statusName%></p></div>
+                    <% if (data.status == 0) {%>
+                       <div class="right right<%=data.joinId%>"><a href="javascript:;" class="weui-btn weui-btn_mini weui-btn_primary" id="showIOSDialog<%=data.joinId%>" onclick="getConfirms('<%=data.joinId%>')">取消报名</a></div>
+                    <%}%>
+                </div>
+                <div class="weui-panel__bd clear">
+                    <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg">
+                        <div class="weui-media-box__hd lecture-left">
+                            <img class="weui-media-box__thumb" src="<%=data.imgUrl%>" alt="">
+                        </div>
+                        <div class="weui-media-box__bd lecture-right">
+                            <h4 class="weui-media-box__title"><%=data.name%></h4>
+                            <p><%=data.time%>
+                             （周<%=data.day %>）
+                                
+                            </p>
+                            <p class="address"><%=data.address%></p>
+                            <p>报名人：<%=data.userName%></p>
+                            <p>报考号：<%=data.joinCode%></p> 
+                            <p><span class="cost"><%=data.charge%></span><span class="long"> | </span>全程心管家</p>                                                                 
+                        </div>
+                    </a>   
+                </div>
+                <div class="weui-panel__ft">
+                    <a href="<%=data.url%>" class="weui-cell weui-cell_access weui-cell_link activity">
+                        <div class="weui-cell__bd">活动详细</div>
+                        <span class="weui-cell__ft"></span>
+                    </a>    
+                </div>
+            </div>
+        </div>
+        <div id="dialogs<%=data.joinId%>">
+            <div class="js_dialog" id="iosDialog<%=data.joinId%>" style="display: none;">
+                <div class="weui-mask"></div>
+                <div class="weui-dialog">
+                    <div class="weui-dialog__bd">你确定取消报名么？</div>
+                    <div class="weui-dialog__ft">
+                        <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+                        <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary" id="confirm<%=data.joinId%>">确定</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% }) %>
+    <% if (errorMessage) {%>
+        <div id="modalerr">
+          <div class="weui-mask"></div>
+          <div class="weui-dialog">
+            <div class="weui-dialog__hd"><strong class="weui-dialog__title">错误提示</strong></div>
+            <div class="weui-dialog__bd">
+              <%=errorMessage%>
+            </div>
+            <div class="weui-dialog__ft">
+              <a id="closeerr" href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>
+            </div>
+          </div>
+        </div>
+    <%}%>
+        
+    
+</body>
+ <script src="<%=_src('/js/lecture/info.min.js')%>"></script>
+</html>

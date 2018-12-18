@@ -1,0 +1,322 @@
+body{
+	background: #056457;
+	box-sizing: border-box;
+	margin: 0 auto;
+	font-family: sans-serif,Helvetica;
+}
+.content{
+	width:100%;
+	max-width: 640px;
+	margin:0 auto;
+	img{
+		width:100%;
+	}
+}
+input:focus{
+	outline: none;
+}
+textarea:focus{
+	outline: none;
+}
+.father-header{
+	width:100%;
+	height:6.5rem;
+	background:url("../../image/father/father_01-2.png") no-repeat;
+	margin:0 auto;
+	background-size:cover;
+}
+.father-content{
+	width:90%;
+	height:14.5rem;
+	background:url("../../image/father/father-1_01.png") no-repeat;
+	margin:0.25rem auto 0;
+	background-size:100% 100%;
+	position:relative;
+	overflow: hidden;
+	font-size:0.7rem;
+	>span{
+		display: block;
+		width:85%;
+		height:6.5rem;
+		margin:0.375rem auto 0;
+		background:url("../../image/father/father-1_03.png") no-repeat;
+		background-size:100% 100%;
+	}
+	div{
+		margin-left:0.75rem;
+	}
+	b{
+		display:block;
+		width:85%;
+		height:6.5rem;
+		margin:0.375rem auto 0;
+		background:url("../../image/father/father-02.png") no-repeat;
+		background-size:100% 100%;
+	}
+	u{
+		display: block;
+		width:85%;
+		height:6.5rem;
+		margin:0.375rem auto 0;
+		background:url("../../image/father/father_03.png") no-repeat;
+		background-size:100% 100%;
+	}
+}
+.left-arrows{
+	position:absolute;
+	width:1.75rem;
+	height:2.75rem;
+	margin-top:-0.875rem;
+	background:url("../../image/father/left-arrows.png") no-repeat;
+	background-size:100% 100%;
+	top:50%;
+	left:0;
+}
+.right-arrows{
+	position:absolute;
+	width:1.75rem;
+	height:2.75rem;
+	margin-top:-0.875rem;
+	background:url("../../image/father/right-arrows.png") no-repeat;
+	background-size:100% 100%;
+	top:50%;
+	right:0;
+	z-index:1000;
+}
+.arrows{
+	animation:myfirst 2s linear infinite;
+	-moz-animation:myfirst 2s linear infinite; /* Firefox */
+	-webkit-animation:myfirst 2s linear infinite; /* Safari and Chrome */
+	-o-animation:myfirst 2s linear infinite; /* Opera */
+	opacity:0;
+}
+@keyframes myfirst
+{
+	0%   {opacity: 0}
+	25%  {opacity: 0.5}
+	50%  {opacity: 1}
+	75%  {opacity: 0.5}
+	100% {opacity: 0}
+}
+.father-footer{
+	width:85%;
+	height:5rem;
+	margin:0.5rem auto 0;
+	a{
+		display:inline-block;
+		width:5.5rem;
+		height:3rem;
+	}
+}
+.create-greeting-card{
+	background:url("../../image/father/create.png") no-repeat;
+	background-size:100% 100%;
+	margin-left:0.2rem;
+}
+.edit{
+	background:url("../../image/father/edit.png");
+	background-size:100% 100%;
+	margin-left: 1.75rem;
+}
+.appellation{
+	padding-left: 0.5rem;
+	margin-top:0.5rem;
+	position: relative;
+	h5{
+		border-bottom:1px solid #fff;
+		width:4.5rem;
+		text-align:center;
+		height:0.9rem;
+		color:#fff;
+		background:#056457;
+		font-size:0.7rem;
+		font-weight: normal;
+		padding-bottom:0.1rem;
+	}
+	span{
+		width:3.5rem;
+		height:0.5rem;
+		background: url("../../image/father/liner_03.png") 0px -0.1rem;
+		position:absolute;
+		left:0.45rem;
+		top:0.5rem;
+	}
+}
+.details{
+	padding-left:0.5rem;
+	position:relative;
+	margin-top: 0.1rem;
+	height:3.864734rem;
+	p{
+		width:95%;
+		color:#fff;
+		outline:none;
+		resize:none;
+		background:#056457;
+		margin:0;
+		border:0;
+		line-height: 1rem;
+		text-indent:2em;
+		background:linear-gradient(#056457 0.95rem,#fff 0);
+ 		background-size:100% 1rem;
+		
+	}
+}
+.signature{
+	text-align: right;
+	position:relative;
+	h5{
+		border:0;
+		// width:4.5rem;
+		//height:0.9rem;
+		background:#056457;
+		// margin-top:0.5rem;
+		font-size:0.7rem;
+		font-weight: normal;
+		float: right;
+		line-height:0.9rem;
+		color:#fff;
+		background:#056457;
+		border-bottom:1px solid #fff;
+		margin-right: 1rem;
+		margin-top:0.115942rem;
+	}
+	span{
+		width:3.5rem;
+		height:0.5rem;
+		background: url("../../image/father/liner_03.png");
+		position:absolute;
+		right:0.95rem;
+		top:0.15rem;
+	}
+}
+.modal{
+	display:none;
+	width:100%;
+	height:100%;
+	background:rgba(0,0,0,.8);
+	position:fixed;
+	left:0;
+	top:0;
+	z-index: 100;
+	color:#f90;
+	font-size:1.25rem;
+	.modal-content{
+		width:100%;
+		max-width:640px;
+		position:absolute;
+		bottom:-8rem;
+		left:0;
+		.modal-edit{
+			position:relative;
+			width:85%;
+			height:7.5rem;
+			margin: 0 auto;
+			background: #056457;
+			border-radius: 0.5rem;
+			span{
+				width:100%;
+				height:7.5rem;
+				display:block;
+				background:url("../../image/father/modal.png") no-repeat;
+				background-size:100% 100%;
+			}
+			.Edit-Contents{
+				position:absolute;
+				top:0;
+				left:0;
+				width:100%;
+				>div{
+					width:90%;
+					margin:0 auto;
+					input{
+						width:4.5rem;
+						display:block;
+						background:#056457;
+						border:0;
+						
+						color:#fff;
+						height:1rem;
+						font-size:0.75rem;
+						text-align:center;
+					}
+					.edit-appellation{
+						margin-top: 0.5em;
+					}
+					.edit-signature{
+						float:right;
+					}
+					textarea{
+						display:block;
+						width:100%;
+						text-indent:2em;
+						margin-top:0.2rem;
+						background:#056457;
+						border:0;
+						font-size:0.75rem;
+						color:#fff;
+						height:4rem;
+						resize:none;
+						text-decoration:underline;
+						line-height:1rem;
+					}
+					.nickname{
+						width:4.5rem;
+						border-bottom:1px solid #fff;
+					}
+					.input-signature{
+						width:4.5rem;
+						margin-left:calc(100% - 4.5rem);
+						border-bottom:1px solid #fff;
+						height:1rem;
+					}
+				}
+			}
+		}
+		.modal-btn{
+			width:85%;
+			margin:0.5rem  auto 0;
+			a{
+				display:inline-block;
+				width:5.4rem;
+				height:2.7rem;
+				background: #056457;
+				border-radius:1rem;
+			}
+			.cancel{
+				margin-left:1.9rem;
+				span{
+					display:inline-block;
+					width:5.5rem;
+					height:3rem;
+					background:url("../../image/father/cancel.png");
+					background-size:100% 100%;
+				}
+			} 
+			.confirm {
+				 margin-left:0.15rem;
+				span{
+					display:inline-block;
+					width:5.5rem;
+					height:3rem;
+					background:url("../../image/father/confirm.png");
+					background-size:100% 100%;
+					
+				}
+			}	
+		}
+	}
+}
+.hint{
+	display:none;
+	background:#056457;
+	position:relative;
+	left:0;
+	bottom:60%;
+	width:7.729469rem;
+	z-index:100;
+	font-size:18px;
+	text-align:center;
+	margin:0 auto;
+	color:#fff;
+}

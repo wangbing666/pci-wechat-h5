@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>绑定医保卡</title>
+  <% include ../layout/layout %>
+  <script src="<%=_src('/lib/weui/weui.min.js')%>"></script>
+  <script type="text/javascript">
+    var share = new share("<%=_src('')%>") //jssdk分享页面
+  </script>
+  <style>
+    body{
+      background: #ebebeb;
+      color: #666;
+    }
+    .weui-cells:after, .weui-cells:before{
+      z-index: 0;
+    }
+    .weui-cell:before{
+      z-index: 0;
+    }
+    .accomplish{
+      padding: 0 15px;
+      margin: 15px 0;
+    }
+    .accomplish a{
+      background: #35B2F2;
+    }
+    .error{
+      color: #da322e;
+      font-size: 12px;
+      padding: 0 15px;
+      text-align: center;
+      display: none;
+    }
+    .gain_social_security{
+      padding: 0 15px;
+      margin-top: 30px;
+      margin-bottom: 20px;
+    }
+    .gain_social_security h2{
+      color:#666;
+      font-size: 20px;
+      font-weight: normal;
+    }
+    .card{
+      margin-top: 15px;
+    }
+    .card h3{
+      color: #666;
+      font-size: 18px;
+      font-weight: normal;
+    }
+    .card_img img{
+      width: 45%;
+    }
+    .card_img img:nth-child(2){
+      padding-left: 8%;
+    }
+    .card_number{
+      text-align: right;
+    }
+    .weui-btn_primary:not(.weui-btn_disabled):active{
+      background-color: #6fc8f6;
+    }
+    .weui-toast{
+      min-height: 0;
+    }
+    .weui-toast__content{
+      margin-top: 10px;
+    }
+    .toast{
+      position: fixed;
+      z-index: 5000;
+      min-width: 50px;
+      max-width: 300px;
+      min-height: 0;
+      margin-left: 0;
+      top: 50%;
+      left: 50%;
+      padding: 0px 10px;
+      width: auto;
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      background-color: rgba(17, 17, 17, 0.7);
+      text-align: center;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .toast p{
+        margin:0;
+        font-size: 14px;
+        padding: 3px 0;
+    }
+  </style>
+</head>
+
+<body ontouchstart>
+  <div class="bindingSocialSecurity">
+    <div class="weui-cells">
+      <div class="weui-cell">
+        <div class="weui-cell__bd">
+            <p>持卡人姓名</p>
+        </div>
+        <div class="weui-cell__ft"><%=name%></div>
+      </div>
+      <div class="weui-cell">
+        <div class="weui-cell__bd">
+            <p>持卡人身份证</p>
+        </div>
+        <div class="weui-cell__ft"><%=card%></div>
+      </div>
+      <div class="weui-cell">
+          <div class="weui-cell__hd"><label class="weui-label">卡号</label></div>
+          <div class="weui-cell__bd">
+              <input class="weui-input card_number" id="card_number" type="text" pattern="[0-9]*[a-z]" placeholder="请填写医保卡/社保卡号"/>
+          </div>
+      </div>
+    </div>
+    <div class="weui-cells__tips">全程心管家将对您的个人信息严格保密，请放心填写</div>
+    <div class="page__bd page__bd_spacing accomplish">
+      <a href="javascript:;" class="weui-btn weui-btn_primary" id="accomplish">完成</a>
+    </div>
+    <div class="error">
+      请重新填写您的个人信息并认真核对，以免再次认证失败。
+    </div>
+  </div>
+  <div class="gain_social_security">
+    <h2>如何获取医保/社保卡号</h2>
+    <div class="card">
+      <h3>卡一：社会保障卡</h3>
+      <div class="card_img">
+        <img src="<%=_src('/image/healthRecords/@3x医保卡背面.png')%>" alt="">
+        <img src="<%=_src('/image/healthRecords/@3x医保卡正面.png')%>" alt="">
+      </div>
+    </div>
+    <div class="card">
+      <h3>卡二：社会保障卡(医疗保险专用)</h3>
+      <div class="card_img">
+        <img src="<%=_src('/image/healthRecords/1981514344607_.pic_hd.jpg')%>" alt="">
+        <img src="<%=_src('/image/healthRecords/1991514344607_.pic_hd.jpg')%>" alt="">
+      </div>
+    </div>
+  </div>
+  <div id="card_number_toast" style="display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+        <i class="weui-icon-warn weui-icon_toast"></i>
+        <p class="weui-toast__content">请填写卡号</p>
+    </div>
+  </div>
+  <div id="audit_toast" style="display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+        <i class="weui-loading weui-icon_toast"></i>
+        <p class="weui-toast__content">审核中</p>
+    </div>
+  </div>
+  <div id="certification_by" style="display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+        <i class="weui-icon-success-no-circle weui-icon_toast"></i>
+        <p class="weui-toast__content">认证通过</p>
+    </div>
+  </div>
+  <!-- <div id="authentication_failed" style="display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+        <i class="weui-icon-cancel weui-icon_toast"></i>
+        <p class="weui-toast__content">认证失败</p>
+    </div>
+  </div> -->
+  <div id="toast" style="display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast toast" >
+        <p class="weui-toast__content"></p>
+    </div>
+  </div>
+</body>
+<script>
+$(document).ready(function(){
+  // 完成提交
+  $("#accomplish").on('click', function() {
+    var card_number = $("#card_number").val();
+    if (card_number) {
+      if ((/^[0-9a-zA-Z]*$/g).test(card_number) && card_number) {
+        ajax(card_number);
+      } else {
+        $(".error").html('请填写正确的社保卡号')
+      }
+    } else {
+     cardNumberToast();   
+    }
+  });
+  // 提交申请
+  function ajax(card_number) {
+    auditToast()
+    $.ajax({
+      type: 'get',
+      url: "<%=_src('')%>/bindingSocialSecuritySuccess",
+      data:{cardNumber: card_number},
+      success: function (data) {
+        console.log(data)
+        $('#audit_toast').fadeOut(100);
+        if (data && data.code === 0) {
+          certificationByToast()
+        } else if (data && data.code === 1) {
+          certificationByToast()
+        } else {
+          authenticationFailedToast()
+          $(".error").css({
+            'display': 'block'
+          })
+          $(".error").html('*请重新填写您的个人信息并认真核对，以免再次认证失败。')
+          toast(data.msg)
+        }
+      },
+      error: function (err) {
+        $('#audit_toast').fadeOut(100);
+        authenticationFailedToast()
+        $(".error").css({
+            'display': 'block'
+        })
+        $(".error").html('啊~接口请求出错了，请稍后再试');
+      }
+    })
+  }
+  // 填写卡号
+  function cardNumberToast() {
+    var $toast = $('#card_number_toast');
+    if ($toast.css('display') != 'none') return;
+    $toast.fadeIn(100);
+    setTimeout(function () {
+        $toast.fadeOut(100);
+    }, 1000);
+  }
+  // 审核中
+  function auditToast() {
+    var $toast = $('#audit_toast');
+    if ($toast.css('display') != 'none') return;
+    $toast.fadeIn(100);
+  }
+
+  // 认证通过
+  function certificationByToast() {
+    var $toast = $('#certification_by');
+    if ($toast.css('display') != 'none') return;
+    $toast.fadeIn(100);
+    setTimeout(function () {
+      $toast.fadeOut(100);
+      window.location.href = "<%=_src('/EMR')%>"
+    }, 2000);
+  }
+  // 报错提示
+  function toast(msg) {
+    var $toast = $('#toast');
+    $('#toast p').html(msg)
+    $toast.fadeIn(100);
+    setTimeout(function () {
+        $toast.fadeOut(100);
+    }, 1500);
+  }
+
+  // 认证失败
+  function authenticationFailedToast() {
+    var $toast = $('#authentication_failed');
+    if ($toast.css('display') != 'none') return;
+    $toast.fadeIn(100);
+    setTimeout(function () {
+      $toast.fadeOut(100);
+    }, 2000);
+  }
+
+});  
+</script>
+</html>

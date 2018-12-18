@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>登录成功通知</title>
+  <% include ../layout/layout %>
+</head>
+
+<body ontouchstart style="color: #666">
+  <article class="weui-article">
+    <h1 style="color: #333">登录成功通知</h1>
+      <section>
+        <span style="position: relative;bottom: 7px;font-size: 14px;color: #999" class="date"></span>
+        <p>
+          亲爱的<%=username%>，您已成功登录全程心管家。您可以在“找医生”、“健康档案”、“健康管理”体验我们的服务。
+        </p>
+      </section>
+  </article>
+</body>
+<script>
+  var share = new share("<%= _src('') %>") //jssdk分享页面
+  var myDate = new Date();
+  var $date = $(".date");
+  getDate();
+
+  function getDate() {
+    var Y = myDate.getFullYear(),
+        M = myDate.getMonth() + 1,
+        D = myDate.getDate();
+    $date.text(Y + "年" + M + "月" + D + "日");
+  }
+</script>
+</html>

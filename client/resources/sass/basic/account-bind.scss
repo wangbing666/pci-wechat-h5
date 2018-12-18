@@ -1,0 +1,233 @@
+body {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.container {
+  background-color: #fff;
+  color: #666;
+}
+
+.cell {
+  position: relative;
+  border-bottom: 1px solid #dcdcdc;
+  height: 35px;
+  padding: 8px 15px;
+  line-height: 35px;
+}
+
+.cell-image {
+  position: absolute;
+  left: 15px;
+  top: 8px;
+  img {
+    display: bolok;
+    width: 35px;
+    heigth: 35px;
+    border-radius: 20px;
+  }
+}
+
+.cell-content {
+  margin-left: 45px;
+  font-size: 16px;
+}
+
+.cell-right {
+  position: absolute;
+  top: 8px;
+  right: 15px;
+  font-size: 14px;
+  color: #999;
+}
+
+.addition {
+  padding: 10px 0;
+  border-bottom: 1px solid #dcdcdc;
+  text-align: center;
+  font-size: 16px;
+  color: #999;
+}
+
+.add-btn {
+  display: block;
+  width: 100%;
+  height: 40px;
+  padding-bottom: 5px;
+  background: url(../../image/icon-add.png) no-repeat top center;
+  background-size: 35px 35px;
+  border: none;
+}
+
+button:focus {
+  outline: none;
+}
+
+button[disabled] {
+  color: rgba(255, 255, 255, 0.6) !important;
+  background-color: #ccc !important;
+}
+
+button:after {
+  border: none !important;
+}
+
+.account-header {
+  height: 95px;
+  padding: 30px 0 15px;
+  text-align: center;
+  overflow: hidden;
+  img {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px;
+  }
+}
+
+.account-container {
+  padding: 0 15px;
+}
+
+.account-field {
+  label {
+    font-size: 16px;
+    line-height: 3;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+
+.showPicker {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  padding: 0 15px;
+  border: 1px solid #dcdcdc;
+  font-size: 16px;
+  background-color: #fff;
+  span {
+    display: block;
+    width: 100%;
+    height: 40px;
+    background: url(../../image/icon-arrow-down.png) no-repeat right center;
+    background-size: 13px;
+  }
+}
+
+input {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  border: 1px solid #dcdcdc;
+  border-radius: 0;
+  outline: 0;
+  -webkit-appearance: none;
+  padding: 0 15px;
+  font-size: 16px;
+  color: #666;
+}
+
+input:focus {
+  outline: none;
+}
+
+input#title {
+  border-top: none;
+}
+
+.account-btn {
+  padding: 30px 0;
+}
+
+.display {
+  display: none;
+}
+
+.red {
+  color: #DA322E;
+}
+
+.weui-btn_primary {
+  background-color: #35B2F2 !important;
+}
+
+.weui-dialog__btn_primary {
+  color: #35B2F2 !important;
+}
+
+.picker-choose {
+  height: 46px !important;
+  line-height: 46px !important;
+  border-bottom: 1px solid #dcdcdc !important;
+}
+
+.picker-title,
+.wheel-item {
+  font-size: 16px !important;
+  font-weight: 400 !important;
+}
+
+.picker .picker-panel .picker-choose .cancel,
+.picker .picker-panel .picker-choose .confirm {
+  padding: 0 10px !important;
+  top: 0 !important;
+}
+
+.picker .picker-panel .picker-choose .confirm {
+  color: #35B2F2 !important;
+}
+
+.Validform_checktip {
+  display: block;
+  line-height: 2.5;
+  font-size: 14px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.Validform_wrong {
+  color: #DA322E !important;
+  font-size: 14px;
+  padding-left: 5px;
+}
+
+.Validform_right {
+  display: none !important;
+  color: #00CD66 !important;
+}
+
+.weui-toast {
+  position: fixed;
+  z-index: 5000;
+  width: 15.6em;
+  min-height: 2.6em;
+  top: 180px;
+  left: 50%;
+  margin-left: -7.8em;
+  background: rgba(40, 40, 40, .75);
+  text-align: center;
+  border-radius: 5px;
+  color: #fff;
+}
+
+.weui-toast__content {
+  margin: 15px;
+  font-size: 15px;
+}

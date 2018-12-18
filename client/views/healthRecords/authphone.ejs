@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>实名认证</title>
+  <% include ../layout/layout %>
+  <script type="text/javascript">
+    var url = "<%=url%>"
+    var share = new share("<%=_src('')%>") //jssdk分享页面
+    var userId = "<%=userId%>"
+    var access_token = "<%=access_token%>"
+  </script>
+  <style>
+    body{
+      background: #ebebeb;
+      color: #666;
+    }
+    .weui-cells:after, .weui-cells:before{
+      z-index: 0;
+    }
+    .weui-cell:before{
+      z-index: 0;
+    }
+    .weui-btn_primary:not(.weui-btn_disabled):active{
+      background-color: #6fc8f6;
+    }
+    .authphone_footer{
+      position: fixed;
+      left: 0;
+      bottom:0;
+      width: 100%;
+    }
+    .authphone_footer_error{
+      padding:10px 15px;
+      font-size: 14px;
+      color: #DA322E;
+    }
+    .authphone_btn a{
+      background:#35B2F2;
+    }
+    .authphone_form{
+      background:#fff;
+    }
+    .authphone_prompting{
+      padding: 10px 15px;
+      font-size: 14px;
+      color: #999999;
+    }
+    .weui-btn{
+      border-radius: 0;
+    }
+    .weui-btn:after{
+      border: 0;
+    }
+    .toast{
+      position: fixed;
+      z-index: 5000;
+      min-width: 50px;
+      max-width: 300px;
+      min-height: 0;
+      margin-left: 0;
+      top: 50%;
+      left: 50%;
+      padding: 0px 10px;
+      width: auto;
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      background-color: rgba(17, 17, 17, 0.7);
+      text-align: center;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .toast p{
+        margin:0;
+        font-size: 14px;
+        padding: 3px 0;
+    }
+    .weui-toast__content{
+      margin-top: 10px;
+    }
+    .card_number{
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+
+<body ontouchstart>
+  <div class="authphone">
+    <div class="authphone_form">
+      <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">手机号</label></div>
+        <div class="weui-cell__bd">
+            <input class="weui-input" id="phone" type="tel" maxlength="11" placeholder="请输入手机号" value="<%=tel%>"/>
+        </div>
+      </div>
+      <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">姓名</label></div>
+        <div class="weui-cell__bd">
+            <input class="weui-input" id="name" type="text" placeholder="请输入姓名" value="<%=userName%>"/>
+        </div>
+      </div>
+      <div class="weui-cell">
+        <div class="weui-cell__hd"><label class="weui-label">身份证号</label></div>
+        <div class="weui-cell__bd">
+            <input class="weui-input card_number" id="card" type="text" maxlength="18" placeholder="请输入身份证号"/>
+        </div>
+      </div>
+    </div>
+    <p class="authphone_prompting">全程心管家将对您的个人信息严格保密，请放心填写。</p>
+    <div class="authphone_footer">
+      <div class="authphone_footer_error" style="display: none;">
+        *认证失败，请检查身份信息是否与手机运营商预留信息一致。
+      </div>
+      <div class="page__bd page__bd_spacing authphone_btn">
+        <a href="javascript:;" class="weui-btn weui-btn_primary" id="authphone_btn">申请实名认证</a>
+      </div>
+    </div>
+  </div>
+  <div id="audit_toast" style="display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+        <i class="weui-loading weui-icon_toast"></i>
+        <p class="weui-toast__content">审核中</p>
+    </div>
+  </div>
+  <div id="certification_by" style="display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+        <i class="weui-icon-success-no-circle weui-icon_toast"></i>
+        <p class="weui-toast__content">认证通过</p>
+    </div>
+  </div>
+  <div id="authentication_failed" style="display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+        <i class="weui-icon-cancel weui-icon_toast"></i>
+        <p class="weui-toast__content">认证失败</p>
+    </div>
+  </div>
+  <div id="toast" style="display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast toast" >
+        <p class="weui-toast__content"></p>
+    </div>
+  </div>
+</body>
+<script>
+$(document).ready(function(){
+  var $auditToast = $('#audit_toast');
+  var $certification = $('#certification_by');
+   // 申请认证
+  $("#authphone_btn").on('click',function() {
+    var phone = $("#phone").val(),
+        name = $("#name").val(),
+        card = $("#card").val();
+    if (testPhone(phone) === true && testName(name) === true && testCard(card) === true) {
+      $(".authphone_footer_error").css({
+        'display': 'none'
+      })
+      authphone(phone, name, card);
+    }   
+  });
+
+ //  验证手机号
+ function testPhone(phone) {
+  if (phone){
+    if ((/^1[3|4|5|6|7|8|9][0-9]{9}$/).test(phone)) {
+      if (phone.substr(0,3) === '170' || phone.substr(0,3) === '171') {
+        toast('此手机号码暂不支持实名认证')
+      } else {
+        return true;
+      }
+    } else {
+      $(".authphone_footer_error").html('*请填写正确的手机号码');
+      toast('请填写正确的手机号码')
+    }
+  } else {
+    toast('请输入手机号')
+  }
+ };
+
+ // 验证姓名
+ function testName(name) {
+  if (name) {
+    if ((/^[\u4E00-\u9FA5\uf900-\ufa2d·s]{2,20}$/).test(name)) {
+      return true;
+    } else {
+      toast('请填写正确的姓名')
+    }
+  } else {
+    toast('请输入姓名')
+  }
+ };
+
+ //验证身份证
+ function testCard(card) {
+  if (card) {
+    if ((/(^\d{15}$)|(^\d{17}([0-9]|X|x)$)/).test(card)) {
+      return true;
+    } else {
+      toast('请输入正确的身份证号码')
+    }
+  } else {
+    toast('请输入身份证号码')
+  }
+ };
+
+ //提交请求
+ function authphone(phone, name, card) {
+    auditToast()
+    $.ajax({
+      type: 'POST',
+      url: url + "api/ipd/validateCardNum",
+      data:JSON.stringify({mobileNum: phone, name:name, idCard:card}),
+      processData: false,
+      contentType: 'application/json',
+      success: function (data) {
+        if (data && data.code === 0) {
+          updateCard(phone, name, card)
+        } else if ( data && data.code === 1000) {
+          authenticationFailedToast()
+          $(".authphone_footer_error").css({
+            'display': 'block'
+          })
+          $(".authphone_footer_error").html('*认证失败，请检查身份信息是否与手机运营商预留信息一致');
+        } else {
+          authenticationFailedToast()
+          $(".authphone_footer_error").css({
+            'display': 'block'
+          })
+          $(".authphone_footer_error").html("*认证失败，请检查身份信息是否与手机运营商预留信息一致")
+        }
+      },
+      error: function (err) {
+        $('#audit_toast').fadeOut(100);
+        authenticationFailedToast()
+        $(".authphone_footer_error").css({
+            'display': 'block'
+        })
+        $(".authphone_footer_error").html("*认证失败，请检查身份信息是否与手机运营商预留信息一致");
+      }
+    })
+ };
+
+ //更新用户实名认证信息
+ function updateCard(phone, name, card) {
+  $.ajax({
+      type: 'POST',
+      url: url + "api/user/updateValidateStatus",
+      data:JSON.stringify({validatePhone: phone, idCardName:name, idCardNumber:card, userId:userId}),
+      headers: {
+        'access-token': access_token
+      },
+      processData: false,
+      contentType: 'application/json',
+      success: function (data) {
+        $auditToast.fadeOut(0);
+        if (data && data.code === 0) {
+          certificationByToast()
+        } else {
+          toast(data.msg)
+        }
+      },
+      error: function (err) {
+        toast('服务器请求出错了')
+        console.log(err)
+      }
+    })
+ }
+
+ // 审核中
+ function auditToast() {
+    if ($auditToast.css('display') != 'none') return;
+    $auditToast.fadeIn(100);
+ }
+
+  // 认证通过
+ function certificationByToast() {
+    if ($certification.css('display') != 'none') return;
+    $certification.fadeIn(0);
+    setTimeout(function () {
+      $certification.fadeOut(100);
+      window.location.href = "<%=_src('/EMR')%>"
+    }, 2000);
+ }
+
+  // 认证失败
+ function authenticationFailedToast() {
+    $auditToast.fadeOut(0);
+    var $toast = $('#authentication_failed');
+    if ($toast.css('display') != 'none') return;
+    $toast.fadeIn(100);
+    setTimeout(function () {
+      $toast.fadeOut(100);
+    }, 2000);
+ }
+
+  function toast(msg) {
+    var $toast = $('#toast');
+    $('#toast p').html(msg)
+    $toast.fadeIn(100);
+    setTimeout(function () {
+      $toast.fadeOut(100);
+    }, 1500);
+  }
+
+  //底部提交按钮顶上去
+  var oHeight = $(document).height(); //浏览器当前的高度
+
+   $(window).resize(function(){
+ 
+        if($(document).height() < oHeight){
+         
+        $(".authphone_btn").css("display","none");
+    }else{
+         
+        $(".authphone_btn").css("display","block");
+    }
+        
+   });
+}) 
+</script>
+</html>

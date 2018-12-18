@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" style="max-width: 640px;margin:0 auto;">
+<head>
+  <title>父亲节活动</title>
+  <% include ../layout/layout %>
+  <link rel="stylesheet" href="<%=_src('/css/father/make-greetingCard.min.css')%>">
+  <link rel="stylesheet" href="<%=_src('/lib/swiper/swiper.min.css')%>">
+  <script src="<%=_src('/lib/swiper/swiper.min.js')%>"></script>
+  <script src="<%=_src('/js/father/rem.min.js')%>"></script>
+  <script>
+    var pathName = "<%=_src('/father')%>";//获取页面跳转路径
+  </script>
+  <style>
+    .swiper-container {
+      height: 100%;
+    }
+    
+    .swiper-pagination-bullet {
+      width: 6px;
+      height: 6px;
+    }
+    
+    .swiper-pagination-bullet-active {
+      background: #4EC196;
+    }
+    
+    .swiper-container-horizontal>.swiper-pagination-bullets,
+    .swiper-pagination-custom,
+    .swiper-pagination-fraction {
+      bottom: 0px;
+    }
+  </style>
+</head>
+
+<body>
+	<div class="content">
+      <div class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <div class="father-header"></div>
+              <div class="left-arrows arrows"></div>
+              <div class="right-arrows arrows"></div>
+              <div class="father-content" id="template1">
+                <span></span>
+                <div class="appellation">
+                  <h5>亲爱的爸比：</h5>
+                  <!-- <span></span> -->
+                </div>
+                <div class="details">
+                  <p>我知道您一直是我最坚强的后盾，您对我的付出，我一直记在心里！么么哒！老爸，您辛苦啦！</p>
+                </div>
+                <div class="signature">
+                  <h5>宝贝女儿</h5>
+                  <!-- <span></span> -->
+                </div>
+              </div>
+              <div class="father-footer">
+                <a href="javascript:void(0)" class="create-greeting-card create1"></a>
+                <a href="javascript:void(0)" class="edit edit1"></a>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="father-header"></div>
+              <div class="left-arrows arrows"></div>
+              <div class="right-arrows arrows"></div>
+              <div class="father-content" id="template2">
+                <b></b>
+                <div class="appellation">
+                  <h5>父亲大人 ：</h5>
+                 <!--  <span></span> -->
+                </div>
+                <div class="details">
+                  <p>父爱如山，虽然我们会争吵，但您总是对我那么宽容。感谢您给我无言的爱，祝您父亲节快乐！</p>
+                </div>
+                <div class="signature">
+                  <h5>您的儿子</h5>
+                  <!-- <span></span> -->
+                </div>
+              </div>
+              <div class="father-footer">
+                <a href="javascript:void(0)" class="create-greeting-card create2"></a>
+                <a href="javascript:void(0)" class="edit" id="edit2"></a>
+              </div>
+            </div>
+            <div class="swiper-slide">
+              <div class="father-header"></div>
+              <div class="left-arrows arrows"></div>
+              <div class="right-arrows arrows"></div>
+              <div class="father-content" id="template3">
+                <u></u>
+                <div class="appellation">
+                  <h5>老爸 ：</h5>
+                  <!-- <span></span> -->
+                </div>
+                <div class="details">
+                  <p>少抽点烟，少喝点酒。照顾好自己身体，为了妈妈和我。父亲节快乐，我们爱你！</p>
+                </div>
+                <div class="signature">
+                  <h5>您的女儿</h5>
+                  <!-- <span></span> -->
+                </div>
+              </div>
+              <div class="father-footer">
+                <a href="javascript:void(0)" class="create-greeting-card create3"></a>
+                <a href="javascript:void(0)" class="edit edit3"></a>
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal">
+        <div class="modal-content">
+          <div class="modal-edit">
+            <span></span>
+            <div class="Edit-Contents">
+              <div>
+                <div class="nickname">
+                   <input type="text" class="edit-appellation" placeholder="称呼" required maxlength="6">
+                </div>
+                <textarea name="" id="" placeholder="请输入您想对父亲说的话" maxlength="65" required></textarea>
+                <div class="input-signature">
+                  <input type="text" class="edit-signature" placeholder="署名" required maxlength="6">
+                </div>
+                <input type="hidden" id="modalId">
+              </div>
+            </div>
+          </div>
+          <div class="modal-btn">
+            <a href="javascript:void(0)" class="confirm">
+              <span></span>
+            </a>
+            <a href="javascript:void(0)" class="cancel">
+              <span></span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="hint">请将信息填写完全</div>
+	</div>
+
+</body>
+<script src="<%=_src('/js/father/make-greetingCard.min.js')%>"></script>
+</html>

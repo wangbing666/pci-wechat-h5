@@ -1,0 +1,45 @@
+{
+  "root": "/pci-wechat",
+  "routes": [{
+    "desc": "用户协议",
+    "parentUrl": "/agreement",
+    "routePath": "/test/test.routes"
+  }, {
+    "desc": "风险评估",
+    "parentUrl": "/assessment",
+    "routePath": "/assessment/assessment.routes"
+  }, {
+    "desc": "讲座",
+    "parentUrl": "/lecture",
+    "routePath": "/lecture/lecture.routes"
+  }, {
+    "desc": "基本信息",
+    "parentUrl": "/",
+    "routePath": "/basic/basic.routes"
+  },{
+    "desc": "找医生",
+    "parentUrl": "/",
+    "routePath": "/find-doctor/find-doctor.routes"
+  }, {
+      "desc": "向医生报到",
+      "parentUrl": "/",
+      "routePath": "/find-doctor/check-in.routes"
+    },
+    {
+    "desc": "我的医生",
+    "parentUrl": "/",
+    "routePath": "/my-doctor/my-doctor.routes"
+  },{
+    "desc": "父亲节",
+    "parentUrl": "/father",
+    "routePath": "/father/father.routes"
+  },{
+    "desc": "JSSDK",
+    "parentUrl": "/",
+    "routePath": "/jssdk/jssdk.routes"
+  },{
+    "desc": "健康档案",
+    "parentUrl": "/",
+    "routePath": "/healthRecords/healthRecords.routes"
+  }]
+}

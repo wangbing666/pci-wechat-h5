@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>随访计划-反馈</title>
+  <% include ../layout/layout %>
+  <script type="text/javascript">
+    var share = new share("<%=_src('')%>") //jssdk分享页面
+  </script>
+  <style>
+    body{
+      background: #ebebeb;
+      color: #666;
+    }
+    #toast .weui-toast{
+        min-height: 0;
+        top: 50%;
+        width: 80%;
+        margin-left: -40%;
+    }
+    #toast .weui-toast p{
+        margin:0;
+        font-size: 14px;
+        padding: 3px 0;
+    }
+    .weui-cells{
+      margin-top: 0;
+    }
+   .follow_hint{
+      font-size: 12px;
+      text-align: center;
+      padding: 7px 0;
+      background: #666;
+    }
+    .follow_hint p{
+      color: #fff;
+    }
+    .follow_content{
+      background: #fff;
+    }
+    .weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before{
+      color:#5abef1;
+    }
+    .follow_feedback_confirm{
+      padding: 0 15px;
+      margin-top: 20px;
+    }
+    .weui-btn_primary{
+      background:#5abef1;
+    }
+    .weui-btn_primary:not(.weui-btn_disabled):active{
+      background-color: #6fc8f6;
+    }
+  </style>
+</head>
+
+<body ontouchstart>
+  <div class="follow_feedback">
+    <div class="follow_hint">
+      <p>请勾选已做的检查（未做任何检查可不勾选直接点确定）</p>
+    </div>
+    <div class="follow_content">
+      <div class="weui-cell">
+        <div class="weui-cell__bd">
+            <p>随访计划内容</p>
+        </div>
+        <div class="weui-cell__ft"><%=firstPushTime%></div>
+      </div>
+      <div class="weui-cells weui-cells_checkbox">
+      <% for (var i = 0; i < plan.length; i++) { %>
+        <label class="weui-cell weui-check__label">
+            <div class="weui-cell__hd">
+                <input type="checkbox" class="weui-check" name="checkbox" value="<%=plan[i]%>"/>
+                <i class="weui-icon-checked"></i>
+            </div>
+            <div class="weui-cell__bd">
+                <p><%=plan[i]%></p>
+            </div>
+        </label>
+      <% } %>
+      <% if (item.length !== 0) { %>
+        <% for (var i = 0; i < item.length; i++) { %>
+          <p style="display: none;" class="review"><%=item[i]%></p>
+        <% } %>
+      <% } %>
+      </div>
+    </div>
+    <div class="page__bd page__bd_spacing follow_feedback_confirm">
+        <a href="javascript:;" class="weui-btn weui-btn_primary">确定</a>
+    </div>
+    <div id="toast" style="display: none;">
+        <div class="weui-mask_transparent"></div>
+        <div class="weui-toast">
+            <p class="weui-toast__content"></p>
+        </div>
+    </div>
+    <div id="audit_toast" style="display: none;">
+      <div class="weui-mask_transparent"></div>
+      <div class="weui-toast" style="top:50%;margin-top: -3.8em;">
+          <i class="weui-loading weui-icon_toast"></i>
+          <p class="weui-toast__content">服务器请求中</p>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+var items = [];
+var url = "<%=url%>";
+var accessToken = "<%=access_token%>";
+var item = "<%=item%>";
+var otherRemind = "<%=otherRemind%>";
+var feedbackTimes = "<%=feedbackTimes%>";
+var flupFeedbackId = "<%=flupFeedbackId%>";
+var dn = "<%=dn%>";
+$(document).ready(function(){
+  $(".weui-check").on('click', function() {
+    var checked = $(this).prop('checked')
+    if (checked === true) {
+      $(this).attr('checked', true)
+      items.push($(this).val())
+    } else {
+      $(this).attr('checked', false)
+      for (var i = 0; i < items.length; i++) {
+        if ($(this).val() == items[i]) {
+          items.splice(i, 1)
+        }
+      }
+    }
+  });
+  $('.follow_feedback_confirm').on('click', function() {
+    auditToast()
+    var $review = $(".review")
+    if ($review) {
+      $(".review").each(function() {
+        items.push($(this).text())
+      })
+    }
+    var data = {
+      feedbackStatus: true,
+      feedbackTimes: feedbackTimes,
+      flupFeedbackId:flupFeedbackId,
+      items:items,
+      otherRemindId: otherRemind
+    }
+    $.ajax({
+      type: 'post',
+      url: url + "api/doctorPatient/flup/feedback/update",
+      headers:{
+        'access-token': accessToken
+      },
+      data: JSON.stringify(data),
+      processData: false,
+      contentType: 'application/json;charset=UTF-8',
+      success: function (res) {
+        $('#audit_toast').fadeOut(100);
+        if (res.code === 0) {
+          weui.alert(dn + "医生已收到您的随访反馈，为了您的健康，请坚持按时随访", function(){
+            wx.closeWindow()
+          })
+        } else if (res.code === 403) {
+          weui.alert('请重新登录', function() {
+            reset();
+          })
+        } else {
+           toast(data.msg)
+        }
+      },
+      error: function () {
+        $('#audit_toast').fadeOut(100);
+        toast('接口请求出错了')
+      }
+    });
+  })
+})
+// token过期，重新登录
+function reset() {
+   $.ajax({
+        type: "get",
+        url: "<%=_src('')%>/reset",
+        success: function(msg){
+          if (msg.code === 0) {
+              window.location.href = "<%=_src('')%>/login?status=6"
+          }
+        },
+        error:function(err){
+          console.log(err);
+        }
+    });
+}
+
+function auditToast() {
+  var $toast = $('#audit_toast');
+  if ($toast.css('display') != 'none') return;
+  $toast.fadeIn(100);
+}
+
+function toast(msg) {
+    var $toast = $('#toast');
+    $('#toast p').html(msg)
+    $toast.fadeIn(100);
+    setTimeout(function () {
+        $toast.fadeOut(100);
+    }, 1500);
+}
+</script>
+</html>

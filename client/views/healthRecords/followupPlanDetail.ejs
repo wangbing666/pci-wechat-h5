@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>查看随访计划</title>
+  <% include ../layout/layout %>
+  <script type="text/javascript">
+    var share = new share("<%=_src('')%>") //jssdk分享页面
+  </script>
+  <style>
+    body{
+      background: #ebebeb;
+      color: #666;
+    }
+    .weui-cells{
+      margin-top: 0;
+    }
+    .cycle{
+      margin-top: 10px;
+      background: #fff;
+    }
+  </style>
+</head>
+
+<body ontouchstart>
+  <div class="followup_plan_detail">
+    <div class="follow_up_time">
+      <div class="weui-cell">
+        <div class="weui-cell__bd">
+            <p>计划开始时间</p>
+        </div>
+        <div class="weui-cell__ft"><%=Y%>-<%=M%>-<%=D%></div>
+      </div>
+      <div class="weui-cells">
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><img src="data:image/png;base64,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" alt="" style="width:20px;margin-right:5px;display:block"></div>
+            <div class="weui-cell__bd">
+                <p>随访周期</p>
+            </div>
+            <div class="weui-cell__ft">请您按计划复查项目</div>
+        </div>
+      </div>
+    </div>
+    <div class="follow_up_cycle">
+      <% for (var i = 0; i < flupDetail.feedbacks.length; i++) { %>
+        <div class="cycle">
+          <div class="weui-cell">
+              <% if (i === 0) {%>
+                <div class="weui-cell__bd">
+                  <p>一个月后</p>
+                </div>
+                <% if (M+1 > 12) {%>
+                  <div class="weui-cell__ft"><%=Y+1%>-<%=1%>-<%=D%></div>
+                <% } else {%>
+                  <div class="weui-cell__ft"><%=Y%>-<%=M+1%>-<%=D%></div>
+                <% } %>
+              <% } %>
+              <% if (i === 1) {%>
+                <div class="weui-cell__bd">
+                  <p>三个月后</p>
+                </div>
+                <% if (M+3 > 12) {%>
+                  <div class="weui-cell__ft"><%=Y+1%>-<%=M-9%>-<%=D%></div>
+                <% } else {%>
+                  <div class="weui-cell__ft"><%=Y%>-<%=M+3%>-<%=D%></div>
+                <% } %>
+              <% } %>
+              <% if (i === 2) {%>
+                <div class="weui-cell__bd">
+                  <p>六个月后</p>
+                </div>
+                <% if (M+6 > 12) {%>
+                  <div class="weui-cell__ft"><%=Y+1%>-<%=M-6%>-<%=D%></div>
+                <% } else {%>
+                  <div class="weui-cell__ft"><%=Y%>-<%=M+6%>-<%=D%></div>
+                <% } %>
+              <% } %>
+              <% if (i === 3) {%>
+                <div class="weui-cell__bd">
+                  <p>九个月后</p>
+                </div>
+                <% if (M+9 > 12) {%>
+                  <div class="weui-cell__ft"><%=Y+1%>-<%=M-3%>-<%=D%></div>
+                <% } else {%>
+                  <div class="weui-cell__ft"><%=Y%>-<%=M+9%>-<%=D%></div>
+                <% } %>
+              <% } %>
+              <% if (i === 4) {%>
+                <div class="weui-cell__bd">
+                  <p>十二个月后</p>
+                </div>
+                <div class="weui-cell__ft"><%=Y+1%>-<%=M%>-<%=D%></div>
+              <% } %> 
+          </div>
+            <% for (var j = 0; j < flupDetail.feedbacks[i].plan.length; j++) { %>
+              <div class="weui-cell">
+                  <div class="weui-cell__bd">
+                      <p><%=flupDetail.feedbacks[i].plan[j].name%></p>
+                  </div>
+                  <% if (flupDetail.feedbacks[i].plan[j].status == true) {%>
+                   <div class="weui-cell__ft">已复查</div>
+                  <% } %>
+              </div>
+            <% } %>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</body>
+<script>
+
+$(document).ready(function(){
+  
+})
+  
+</script>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>上传病历</title>
+  <% include ../layout/layout %>
+<!--   <script src="<%=_src('/lib/vconsole.min.js')%>"></script> -->
+  <script type="text/javascript">
+    var share = new share("<%=_src('')%>") //jssdk分享页面
+  </script>
+  <style>
+    body{
+      background: #ebebeb;
+      color: #666;
+    }
+    .weui-cells:after, .weui-cells:before{
+      z-index: 0;
+    }
+    .weui-cell:before{
+      z-index: 0;
+    }
+    .weui-cell{
+      background: #fff;
+      border-bottom: 1px solid #ccc;
+    }
+    .weui-cells{
+      margin-top: 0;
+    }
+    .friendly_reminder{
+      padding: 10px 15px;
+    }
+    .friendly_reminder h3{
+      color:#666;
+    }
+    .friendly_reminder p{
+      color: #999;
+    }
+    .page__bd{
+      padding: 0 15px;
+    }
+    .weui-uploader__bd{
+      overflow: initial;
+    }
+    .upload_img a{
+      background: #35B2F2;
+    }
+    .weui-btn_primary:not(.weui-btn_disabled):active{
+      background-color: #6fc8f6;
+    }
+    .toast{
+      position: fixed;
+      z-index: 5000;
+      min-width: 50px;
+      max-width: 300px;
+      min-height: 0;
+      margin-left: 0;
+      top: 80%;
+      left: 50%;
+      padding: 0px 10px;
+      width: auto;
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      background-color: rgba(17, 17, 17, 0.7);
+      text-align: center;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .toast p{
+        margin:0;
+        font-size: 14px;
+        padding: 3px 0;
+    }
+    .weui-uploader__file{
+      position: relative;
+      float: left;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      width: 79px;
+      height: 79px;
+      background: no-repeat 50%;
+      background-size: cover;
+    }
+    .weui-uploader__file i{
+      position: absolute;
+      right: -12px;
+      top: -10px;
+      z-index: 10;
+      width: 30px;
+      height: 30px;
+    }
+    .error{
+      color: #da322e;
+      font-size: 14px;
+      padding: 0 15px;
+      text-align: center;
+      display: none;
+      line-height: 25px;
+    }
+  </style>
+</head>
+
+<body ontouchstart>
+  <div class="uploadCaseHistory">
+    <div class="weui-cell weui-cell_access checkDate">
+      <div class="weui-cell__bd">
+          <span style="vertical-align: middle">检查时间</span>
+      </div>
+      <div class="weui-cell__ft confirmDate"></div>
+    </div>
+    <div class="weui-cells weui-cells_form" id="uploader">
+       <div class="weui-cell">
+           <div class="weui-cell__bd">
+               <div class="weui-uploader">
+                   <div class="weui-uploader__hd">
+                       <p class="weui-uploader__title">上传图片</p>
+                       <div class="weui-uploader__info"><span id="number">0</span>/9</div>
+                   </div>
+                   <div class="weui-uploader__bd">
+                       <ul class="weui-uploader__files" id="uploaderFiles"></ul>
+                       <div class="weui-uploader__input-box add"></div>                   
+                   </div>
+               </div>
+           </div>
+       </div>
+    </div>
+    <div class="friendly_reminder">
+      <h3>友情提示</h3>
+      <p>如有问题，我们将与您电话联系，我们电话为400-112-1881</p>
+    </div>
+    <div class="error"></div>
+    <div class="page__bd page__bd_spacing upload_img">
+      <a href="javascript:;" class="weui-btn weui-btn_primary" id="uploaderCustomBtn">确定上传</a>
+    </div>
+    <div id="dialogs">
+      <div class="js_dialog" id="iosDialog2" style="display: none;">
+          <div class="weui-mask"></div>
+          <div class="weui-dialog">
+              <div class="weui-dialog__bd">您已上传成功，平台将在7个工作日内完成电子化处理。您可点击菜单中的“电子病历”进行查询</div>
+              <div class="weui-dialog__ft">
+                  <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary">知道了</a>
+              </div>
+          </div>
+      </div>
+    </div>
+    <div id="toast" style="display: none;">
+      <div class="weui-mask_transparent"></div>
+      <div class="weui-toast toast" >
+          <p class="weui-toast__content"></p>
+      </div>
+    </div>
+    <div id="audit_toast" style="display: none;">
+      <div class="weui-mask_transparent"></div>
+      <div class="weui-toast">
+          <i class="weui-loading weui-icon_toast"></i>
+          <p class="weui-toast__content">上传中...</p>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  // var vConsole = new VConsole();
+var healthUrl = "<%=healthUrl%>" // 获取上传图片接口
+var server = "<%=server%>" //获取接口
+var userId = "<%=userId%>"
+var access_token = "<%=access_token%>" //获取access_token
+
+$(document).ready(function(){
+
+  $('.confirmDate').html(new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate())
+
+  function toast(msg) {
+    var $toast = $('#toast');
+    $('#toast p').html(msg)
+    $toast.fadeIn(100);
+    setTimeout(function () {
+        $toast.fadeOut(100);
+    }, 1500);
+  }
+
+  $(".checkDate").on('click',function () {
+    var Y = new Date().getFullYear();
+    var M = new Date().getMonth() + 1;
+    var D = new Date().getDate();
+    weui.datePicker({
+        start: 1990,
+        end: new Date().getFullYear(),
+        defaultValue: [Y, M, D],
+        onChange: function (result) {
+          
+        },
+        onConfirm: function (result) {
+          $('.confirmDate').html(result[0].value + '-' + result[1].value + '-' + result[2].value)
+        }
+    });
+  })
+
+  var count = 0;
+  var number = 0;
+  var imglist = [];
+  var uploadCustomFileList = [];
+
+  $('.weui-uploader__input-box').on('click', function () {
+    wx.chooseImage({
+      count: 9, // 默认9
+      sizeType: ['original'], // 可以指定是原图还是压缩图，默认二者都有
+      sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+      success: function (res) {
+        var localIds = res.localIds;
+        for (var i = 0; i < localIds.length; i++) {
+          uploadCustomFileList.push({id: count + i, url: localIds[i]});
+          $("#uploaderFiles").append("<li class='weui-uploader__file image' id='" + (count+i) + "'><i class='weui-icon-cancel delete'></i><img class='img-responsive' style='width:79px;height:79px;' src='" + localIds[i] + "'></li>")
+          number++;
+          if (number >= 9) {
+            $(".add").fadeOut(100)
+            break;
+          }
+        }
+        count = count + localIds.length;
+        $("#number").text(number)
+      }
+    });
+  });
+
+  $("#uploaderCustomBtn").on('click', function(){
+    var urlList = [];
+    if (number === 0) {
+      toast('请选择图片')
+    } else {
+      uploadCustomFileList.forEach(function(file){
+        urlList.push(file.url)
+        if (urlList.length === number) {
+          $("#audit_toast").fadeIn(0) // 调用模态框显示
+          var i = 0,length = uploadCustomFileList.length;
+          function upload() {
+            wx.uploadImage({
+              localId: uploadCustomFileList[i].url, // 需要上传的图片的本地ID，由chooseImage接口获得
+              isShowProgressTips: 0, // 默认为1，显示进度提示
+              success: function (res) {
+                i ++
+                var serverId = res.serverId; // 返回图片的服务器端ID
+                imglist.push(serverId);
+                if (i < length) { // 递归处理上传
+                  upload()
+                }
+                if (imglist.length == length) {
+                  getQiniu() // 获取七牛的图片列表
+                }
+              },
+              fail: function (err) {
+                $('#audit_toast').fadeOut(0)
+                console.log(err)
+              }
+            });
+          }
+          upload() // 调用递归函数
+        }
+      });
+    }
+  })
+
+  // 获取上传的图片地址列表
+  function getQiniu() {
+    $.ajax({
+      url: server + "api/qiniu/upload",
+      type: 'post',
+      data: JSON.stringify({mediaIds:imglist}),
+      processData: false,
+      contentType: 'application/json;charset=UTF-8',
+      success: function (msg) {
+        if (msg.code == 0 && msg.data && msg.data.length !== 0) {
+          ajax(msg.data) // 调用上传病历接口
+        } else {
+          $('#audit_toast').fadeOut(0)
+          toast(msg)
+        }
+      },
+      error: function (err) {
+        $('#audit_toast').fadeOut(0)
+        toast('网络请求出错了')
+        console.log(err)
+      }
+    })
+  }
+
+  // 删除图片
+
+  $("#uploaderFiles").on('click', '.delete', function(e){
+    var id = $(this).parent().attr('id')
+    weui.confirm('确定删除该图片？', function(){
+      --number;
+      $('#number').text(number);
+      if (number < 9) {
+        $(".add").fadeIn(100)
+      }
+      var index;
+      for (var i = 0, len = uploadCustomFileList.length; i < len; ++i) {
+        var file = uploadCustomFileList[i];
+        if(file.id == id){
+          index = i;
+          break;
+        }
+      }
+      if(index !== undefined) uploadCustomFileList.splice(index, 1);
+
+      e.target.parentNode.remove();
+    });
+  });
+
+  $('#dialogs').on('click', '.weui-dialog__btn', function(){
+    $(this).parents('.js_dialog').fadeOut(200);
+    wx.closeWindow();
+  });
+})
+
+
+
+// 提交数据
+function ajax(picUrlList) {
+  var data = {
+    imgUrlList: picUrlList,
+    checkDate: $('.confirmDate').text(),
+    userId: userId
+  }
+  $.ajax({
+    type: 'post',
+    url: healthUrl + "record/photo/upload",
+    headers:{
+      'healthClient': 'pci'
+    },
+    data: JSON.stringify(data),
+    processData: false,
+    contentType: 'application/json;charset=UTF-8',
+    success: function (success) {
+      $('#audit_toast').fadeOut(0)
+      if (success && success.code === 0) {
+        $('#iosDialog2').fadeIn(200);
+      } else {
+        $(".error").css({'display': 'block'})
+        $(".error").html(success.msg || '上传失败')
+      }
+    },
+    error: function (error) {
+      $('#audit_toast').fadeOut(0)
+      toast('网络请求出错了')
+      console.log(error);
+    }
+  })
+}
+
+// 显示toast模态框
+function auditToast() {
+  var $toast = $('#audit_toast');
+  if ($toast.css('display') != 'none') return;
+  $toast.fadeIn(100);
+}
+</script>
+</html>

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>电子病历</title>
+  <% include ../layout/layout %>
+  <script type="text/javascript">
+    var share = new share("<%=_src('')%>") //jssdk分享页面
+  </script>
+  <style>
+    body{
+      background: #ebebeb;
+      color: #666;
+    }
+    .weui-cells:after, .weui-cells:before{
+      z-index: 0;
+    }
+    .weui-cell:before{
+      z-index: 0;
+    }
+    .binding_security{
+      font-size: 12px;
+      text-align: center;
+      padding: 7px 0;
+      background: #ff666c;
+      position: fixed;
+      top: 0px;
+      width: 100%;
+      z-index: 1;
+    }
+    .binding_security a{
+      color: #fff;
+    }
+    .weui-cells{
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    .weui-cell{
+      background: #e1f4fd;
+    }
+    .Inspection-report{
+      float: left;
+    }
+    .weui-cell__bd span{
+      float: left;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 3px;
+      font-size: 14px;
+      display: inline-block;
+      margin-left: 10px;
+    }
+    .Inspection-report_title, .routine_blood, .myocardial_protein{
+      padding: 10px 15px;
+      background-color: #fff;
+    }
+    .Inspection-report_title td{
+      min-width: 80px;
+      color:#999;
+    }
+    .hospital_title{
+      color: #333 !important;
+    }
+    .Inspection_department{
+      color: #333 !important;
+    }
+    .Outpatient_service{
+      color: #333 !important;
+    }
+    .routine_blood table, .myocardial_protein table{
+      width: 100%;
+      margin-top: 8px;
+      text-align: center;
+      border-right: 1px solid #ededed;
+      border-bottom: 1px solid #ededed;
+    }
+    .routine_blood td,.routine_blood th,.myocardial_protein td, .myocardial_protein th{
+      border-left: 1px solid #ededed;
+      border-top: 1px solid #ededed;
+      padding: 5px;
+      font-size: 14px;
+    }
+    .routine_blood tr td:nth-child(3){
+      min-width: 50px;
+    }
+    .arrow2{
+      background: url('<%=_src('/image/u580.png')%>') no-repeat right;
+      background-size: 10px 13px;
+      color: #ff0100;
+    }
+    .arrow0{
+      background: url('<%=_src('/image/u578.png')%>') no-repeat right;
+      background-size: 10px 13px;
+      color:#029bfe;
+    }
+    .image_data{
+      margin-top: 10px;
+      background: #fff;
+    }
+    .uploader_img{
+      overflow: hidden;
+      background: #fff;
+    }
+    .weui-uploader__file{
+      margin: 9px;
+      overflow: hidden;
+    }
+    .more{
+      color: #21b3f3;
+    }
+    .weui-cell_access .weui-cell__ft:after{
+      border-color: #21b3f3;
+    }
+    .checkout_more{
+      margin: 10px 0;
+    }
+    .checkout_more_href{
+      background: #fff;
+    }
+    #lg-download{
+      display: none;
+    }
+    .source_image{
+      background-color: #fff;
+    }
+    .source_image .weui-cell__ft{
+      color: #35b2f2;
+    }
+    .discharge_summary_content{
+      padding:10px 15px;
+      font-size: 16px;
+      border-bottom: 1px solid #DCDCDC;
+      background-color: #fff;
+    }
+    .discharge_summary_content span{
+      color: #999;
+    }
+    .drug_list{
+      padding: 10px 15px;
+    }
+    .noEMR{
+      width: 100%;
+      height: 100%;
+    }
+    .noEMR-content{
+      width: 200px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      margin-top: -100px;
+      margin-left: -100px;
+      text-align: center;
+      color: #999;
+    }
+    .noEMR-content img{
+      width: 200px;
+    }
+    .toast{
+      position: fixed;
+      z-index: 5000;
+      min-width: 50px;
+      max-width: 300px;
+      min-height: 0;
+      margin-left: 0;
+      top: 50%;
+      left: 50%;
+      padding: 0px 10px;
+      width: auto;
+      -webkit-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      background-color: rgba(17, 17, 17, 0.7);
+      text-align: center;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .toast p{
+      margin:0 auto;
+      font-size: 14px;
+      padding: 3px 0;
+    }
+  </style>
+</head>
+
+<body ontouchstart>
+  <div class="EMR">
+    <% if (auth == 'false') { %>
+      <div class="js_dialog">
+        <div class="weui-mask"></div>
+        <div class="weui-dialog">
+            <div class="weui-dialog__bd">您的实名认证仍在审核中，请耐心等待</div>
+            <div class="weui-dialog__ft">
+                <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_primary" id="know">知道了</a>
+            </div>
+        </div>
+      </div>
+    <% } else {%>
+      <% if (status == 'false') { %>
+        <% if (medicareCard == null) { %>
+          <div class="binding_security">
+              <a href="<%=_src('/bindingSocialSecurity')%>">立即绑定医保/社保卡，获取完整的个人病史资料 >></a>
+          </div>
+        <% } %>
+        <div class="noEMR">
+          <div class="noEMR-content">
+            <img src="<%=_src('/image/healthRecords/缺省页@3x.png')%>" alt="">
+            <p>暂无相关资料</p>
+          </div>
+        </div>
+      <% } else {%>
+      <div class="page__bd">
+        <% if (medicareCard == null) { %>
+          <div class="binding_security">
+            <a href="<%=_src('/bindingSocialSecurity')%>">立即绑定医保/社保卡，获取完整的个人病史资料 >></a>
+          </div>
+          <div class="page__bd_content" style="margin-top: 33px;">
+        <% } else {%>
+          <div class="page__bd_content">
+        <% } %>
+          <% for (var k = 0; k < data.length; k ++) { %>
+            <div class="weui-cells">
+              <div class="weui-cell">
+                <div class="weui-cell__bd">
+                  <h3 class="Inspection-report"><%=data[k].recordHistoryTypeName%></h3>
+                  <span><%=data[k].recordOrigin%></span>
+                </div>
+                <div class="weui-cell__ft"><%=data[k].checkDate%></div>
+              </div>
+              <% if (data[k].recordHistoryType === 1) { %>
+                <div class="Inspection-report_title">
+                  <table>
+                    <tr>
+                      <td class="hospital_title">医院名称:</td>
+                      <td><%=data[k].hospitalName%></td> 
+                    </tr>
+                    <tr>
+                      <td class="Inspection_department">检验科室:</td>
+                      <td><%=data[k].officeName%></td>
+                    </tr>
+                    <tr>
+                      <td class="Outpatient_service">门诊类型:</td>
+                      <td>无</td>
+                    </tr>
+                  </table>
+                </div>
+                <% if (data[k].object && data[k].object.recordExaminationItemList && data[k].object.recordExaminationItemList.length !== 0) { %>
+                  <% for (var i = 0; i < data[k].object.recordExaminationItemList.length; i ++) { %>
+                    <div class="routine_blood">
+                      <h4><%=data[k].object.recordExaminationItemList[i].title%></h4>
+                      <table border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <th>检查指标</th>
+                          <th>标准区间</th>
+                          <th>数值</th>
+                        </tr>
+                        <% if (data[k].object.recordExaminationItemList[i].examinationItemList && data[k].object.recordExaminationItemList[i].examinationItemList.length !== 0) { %>
+                          <% for (var j = 0; j < data[k].object.recordExaminationItemList[i].examinationItemList.length; j ++) { %>
+                            <tr>
+                              <td><%=data[k].object.recordExaminationItemList[i].examinationItemList[j].name%></td>
+                              <td><%=data[k].object.recordExaminationItemList[i].examinationItemList[j].reference%></td>
+                              <td class="arrow<%=data[k].object.recordExaminationItemList[i].examinationItemList[j].standard%>"><%=data[k].object.recordExaminationItemList[i].examinationItemList[j].value%></td>
+                            </tr>
+                          <% } %>
+                        <% } %>
+                      </table>
+                    </div>
+                  <% } %>
+                <% } %>
+                <% if (data[k].recordOrigin === '自传数据' && data[k].recordHistoryType === 1) { %>
+                  <div class="weui-cell weui-cell_access source_image">
+                    <div class="weui-cell__bd">
+                        <% if (data[k].medicalRecordPhotoList && data[k].medicalRecordPhotoList.length !== 0) { %>
+                          <% for (var i = 0; i < data[k].medicalRecordPhotoList.length; i ++) { %>
+                            <img class="img-responsive" width="100%" style="display: none;" src="<%=data[k].medicalRecordPhotoList[i].imgUrl%>">
+                          <% } %>
+                        <% } %>
+                    </div>
+                    <div class="weui-cell__ft">查看源照片 </div>
+                  </div>
+                <% } %>
+              <% } %>
+              <% if (data[k].recordHistoryType === 2) { %>
+                <div class="discharge_summary">
+                  <div class="discharge_summary_content">
+                    <div class="weui-flex">
+                      <div class="weui-flex__item">
+                        医院名称： <span><%=data[k].hospitalName%></span>
+                      </div>
+                    </div>
+                    <div class="weui-flex">
+                      <div class="weui-flex__item">
+                        检验科室： <span><%=data[k].officeName%></span>
+                      </div>
+                    </div>
+                    <% if (data[k].object) { %>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          住院号： <span><%=data[k].object.hospitalNo%></span>
+                        </div>
+                        <div class="weui-flex__item">
+                          病理号： <span><%=data[k].object.pathobiologyNo%></span>
+                        </div>
+                      </div>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          X光号： <span><%=data[k].object.xrayNo%></span>
+                        </div>
+                        <div class="weui-flex__item">
+                          床号： <span><%=data[k].object.bedNo%></span>
+                        </div>
+                      </div>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          入院时间： <span><%=data[k].object.inTime%></span>
+                        </div>
+                      </div>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          出院时间： <span><%=data[k].object.outTime%></span>
+                        </div>
+                      </div>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          <p>入院诊断：</p>
+                          <span><%=data[k].object.cause%></span>
+                        </div>
+                      </div>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          <p>出院诊断：</p>
+                          <span><%=data[k].object.diagnosis%></span>
+                        </div>
+                      </div>
+                    <% } %>
+                  </div>
+                  <div class="discharge_summary_content">
+                    <div class="weui-cell weui-cell_access" style="padding: 0;background:#fff;">
+                      <div class="weui-cell__hd"><img src="<%=_src('/image/医院icon@3x.png')%>" alt="" style="width:20px;margin-right:5px;display:block"></div>
+                      <div class="weui-cell__bd weui-cell_primary">
+                          <h4>入院时简要病史</h4>
+                      </div>
+                    </div>
+                    <% if (data[k].object) { %>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          1患者： <span><%=data[k].object.briefHistoryName%></span>
+                        </div>
+                      </div>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          2主诉： <span><%=data[k].object.briefHistoryChief%></span>
+                        </div>
+                      </div>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          3现病史： <span><%=data[k].object.briefHistoryPresent%></span>
+                        </div>
+                      </div>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          4既往史： <span><%=data[k].object.briefHistoryPast%></span>
+                        </div>
+                      </div>
+                    <% } %>
+                  </div>
+                  <div class="discharge_summary_content">
+                    <div class="weui-cell weui-cell_access" style="padding: 0;background:#fff;">
+                      <div class="weui-cell__hd"><img src="<%=_src('/image/医院icon@3x.png')%>" alt="" style="width:20px;margin-right:5px;display:block"></div>
+                      <div class="weui-cell__bd weui-cell_primary">
+                          <h4>体检摘要</h4>
+                      </div>
+                    </div>
+                    <% if (data[k].object) { %>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                            T:  <span><%=data[k].object.physicalTemperature%></span>
+                          </div>
+                          <div class="weui-flex__item">
+                            P:  <span><%=data[k].object.physicalPulse%></span>
+                          </div>
+                        </div>
+                        <div class="weui-flex">
+                          <div class="weui-flex__item">
+                            R:  <span><%=data[k].object.physicalRespiration%></span>
+                          </div>
+                          <div class="weui-flex__item">
+                            BP:  <span><%=data[k].object.physicalBloodPressure%></span>
+                          </div>
+                        </div>
+                        <div class="weui-flex">
+                          <div class="weui-flex__item">
+                            摘要： <span><%=data[k].object.physicalExamination%></span>
+                          </div>
+                        </div>
+                      </div>
+                    <% } %>
+                  </div>
+                  <div class="weui-cell weui-cell_access" style="padding: 10px 15px 0;background:#fff;">
+                      <div class="weui-cell__hd"><img src="<%=_src('/image/医院icon@3x.png')%>" alt="" style="width:20px;margin-right:5px;display:block"></div>
+                      <div class="weui-cell__bd weui-cell_primary">
+                          <h4>住院期间主要检验和检查报告</h4>
+                      </div>
+                  </div>
+                  <% if (data[k].object && data[k].object.recordExaminationItemList && data[k].object.recordExaminationItemList.length !== 0) { %>
+                    <% for (var i = 0; i < data[k].object.recordExaminationItemList.length; i ++) { %>
+                      <div class="routine_blood">
+                        <h4><%=data[k].object.recordExaminationItemList[i].title%></h4>
+                        <table border="0" cellspacing="0" cellpadding="0">
+                          <tr>
+                            <th>检查指标</th>
+                            <th>标准区间</th>
+                            <th>数值</th>
+                          </tr>
+                          <% if (data[k].object.recordExaminationItemList[i].examinationItemList && data[k].object.recordExaminationItemList[i].examinationItemList.length !== 0) { %>
+                            <% for (var j = 0; j < data[k].object.recordExaminationItemList[i].examinationItemList.length; j ++) { %>
+                              <tr>
+                                <td><%=data[k].object.recordExaminationItemList[i].examinationItemList[j].name%></td>
+                                <td><%=data[k].object.recordExaminationItemList[i].examinationItemList[j].reference%></td>
+                                <td class="arrow<%=data[k].object.recordExaminationItemList[i].examinationItemList[j].standard%>"><%=data[k].object.recordExaminationItemList[i].examinationItemList[j].value%></td>
+                              </tr>
+                            <% } %>
+                          <% } %>
+                        </table>
+                      </div>
+                    <% } %>
+                  <% } %>
+                  <% if (data[k].object && data[k].object.recordImagingReportList && data[k].object.recordImagingReportList.length !== 0) { %>
+                    <% for (var m = 0; m < data[k].object.recordImagingReportList.length; m ++) { %>
+                      <div class="discharge_summary_content" style="border-top: 1px solid #dedede;">
+                        <div class="weui-cell weui-cell_access" style="padding: 0;background:#fff;">
+                            <div class="weui-cell__hd"><img src="<%=_src('/image/医院icon@3x.png')%>" alt="" style="width:20px;margin-right:5px;display:block"></div>
+                            <div class="weui-cell__bd weui-cell_primary">
+                                <h4>影像资料</h4>
+                            </div>
+                        </div>
+                        <div class="weui-flex">
+                          <div class="weui-flex__item">
+                            检查名称： <span><%=data[k].object.recordImagingReportList[m].name%></span>
+                          </div>
+                        </div>
+                        <div class="weui-flex">
+                          <div class="weui-flex__item">
+                            报告日期： <span><%=data[k].object.recordImagingReportList[m].time%></span>
+                          </div>
+                        </div>
+                        <div class="weui-flex">
+                          <div class="weui-flex__item">
+                            报告单号： <span><%=data[k].object.recordImagingReportList[m].orderNo%></span>
+                          </div>
+                        </div>
+                        <div class="weui-flex">
+                          <div class="weui-flex__item">
+                            临床诊断： <span><%=data[k].object.recordImagingReportList[m].clinicalDiagnosis%></span>
+                          </div>
+                        </div>
+                        <div class="weui-flex">
+                          <div class="weui-flex__item">
+                            检查技术： <span><%=data[k].object.recordImagingReportList[m].technique%></span>
+                          </div>
+                        </div>
+                        <div class="weui-flex">
+                          <div class="weui-flex__item">
+                            影响描述： <span><%=data[k].object.recordImagingReportList[m].description%></span>
+                          </div>
+                        </div>
+                        <div class="weui-flex">
+                          <div class="weui-flex__item">
+                            诊断意见： <span><%=data[k].object.recordImagingReportList[m].suggestion%></span>
+                          </div>
+                        </div>
+                      </div>
+                    <% } %>
+                  <% } %>
+                  <div class="discharge_summary_content">
+                    <div class="weui-cell weui-cell_access" style="padding: 0;background:#fff;">
+                      <div class="weui-cell__hd"><img src="<%=_src('/image/医院icon@3x.png')%>" alt="" style="width:20px;margin-right:5px;display:block"></div>
+                      <div class="weui-cell__bd weui-cell_primary">
+                          <h4>病程与治疗情况</h4>
+                      </div>
+                    </div>
+                    <% if (data[k].object) { %>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                            <span><%=data[k].object.treatmentCondition%></span>
+                        </div>
+                      </div>
+                    <% } %>
+                  </div>
+                  <div class="discharge_summary_content">
+                    <div class="weui-cell weui-cell_access" style="padding: 0;background:#fff;">
+                      <div class="weui-cell__hd"><img src="<%=_src('/image/医院icon@3x.png')%>" alt="" style="width:20px;margin-right:5px;display:block"></div>
+                      <div class="weui-cell__bd weui-cell_primary">
+                          <h4>治疗结果</h4>
+                      </div>
+                    </div>
+                    <% if (data[k].object) { %>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                            <span><%=data[k].object.treatmentResult%></span>
+                        </div>
+                      </div>
+                    <% } %>
+                  </div>
+                  <div class="discharge_summary_content">
+                    <div class="weui-cell weui-cell_access" style="padding: 0;background:#fff;">
+                      <div class="weui-cell__hd"><img src="<%=_src('/image/医院icon@3x.png')%>" alt="" style="width:20px;margin-right:5px;display:block"></div>
+                      <div class="weui-cell__bd weui-cell_primary">
+                          <h4>出院时情况</h4>
+                      </div>
+                    </div>
+                    <% if (data[k].object) { %>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                            <span><%=data[k].object.leaveCondition%></span>
+                        </div>
+                      </div>
+                    <% } %>
+                  </div>
+                  <div class="discharge_summary_content">
+                    <div class="weui-cell weui-cell_access" style="padding: 0;background:#fff;">
+                      <div class="weui-cell__hd"><img src="<%=_src('/image/医院icon@3x.png')%>" alt="" style="width:20px;margin-right:5px;display:block"></div>
+                      <div class="weui-cell__bd weui-cell_primary">
+                          <h4>出院后用药建议</h4>
+                      </div>
+                    </div>
+                    <% if (data[k].object) { %>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                            <span><%=data[k].object.leaveSuggestion%></span>
+                        </div>
+                      </div>
+                    <% } %>
+                  </div>
+                  <div class="discharge_summary_content">
+                    <% if (data[k].object && data[k].object.recordPrescriptionMedicineList && data[k].object.recordPrescriptionMedicineList.length !==0) { %>
+                      <% for (var n = 0; n < data[k].object.recordPrescriptionMedicineList.length; n ++) { %>
+                        <div class="weui-flex">
+                          <div class="weui-flex__item">
+                            药名：  <span><%=data[k].object.recordPrescriptionMedicineList[n].name%></span>
+                          </div>
+                        </div>
+                        <div class="weui-flex">
+                          <div class="weui-flex__item">
+                            用法：  <span><%=data[k].object.recordPrescriptionMedicineList[n].method%></span>
+                          </div>
+                        </div>
+                        <div class="weui-flex">
+                          <div class="weui-flex__item">
+                            用量：  <span><%=data[k].object.recordPrescriptionMedicineList[n].dosage%></span>
+                          </div>
+                        </div>
+                        <div class="weui-flex">
+                          <div class="weui-flex__item">
+                            频度：  <span><%=data[k].object.recordPrescriptionMedicineList[n].frequency%></span>
+                          </div>
+                        </div>
+                        <div class="weui-flex">
+                          <div class="weui-flex__item">
+                            规格：  <span><%=data[k].object.recordPrescriptionMedicineList[n].spec%></span>
+                          </div>
+                        </div>
+                        <div class="weui-flex">
+                          <div class="weui-flex__item">
+                            药量：  <span><%=data[k].object.recordPrescriptionMedicineList[n].dose%></span>
+                          </div>
+                        </div>
+                      <% } %>
+                    <% } %>
+                  </div>
+                  <div class="weui-cell weui-cell_access source_image">
+                    <div class="weui-cell__bd">
+                        <% if (data[k].medicalRecordPhotoList && data[k].medicalRecordPhotoList.length !== 0) { %>
+                          <% for (var i = 0; i < data[k].medicalRecordPhotoList.length; i ++) { %>
+                            <img class="img-responsive" width="100%" style="display: none;" src="<%=data[k].medicalRecordPhotoList[i].imgUrl%>">
+                          <% } %>
+                        <% } %>
+                    </div>
+                    <div class="weui-cell__ft">查看源照片</div>
+                  </div>
+                </div>
+              <% } %>
+              <% if (data[k].recordHistoryType === 3 || data[k].recordHistoryType === 6) { %>
+                <div class="image_data">
+                  <div class="uploader_img">
+                      <ul class="weui-uploader__files uploaderFiles">
+                        <% if (data[k].medicalRecordPhotoList && data[k].medicalRecordPhotoList.length !== 0) { %>
+                          <% for (var i = 0; i < data[k].medicalRecordPhotoList.length; i ++) { %>
+                            <li class="weui-uploader__file">
+                              <img class="img-responsive" width="100%" src="<%=data[k].medicalRecordPhotoList[i].imgUrl%>">
+                            </li>
+                          <% } %>
+                        <% } %>
+                      </ul>
+                  </div>
+                </div>
+              <% } %>
+              <% if (data[k].recordHistoryType === 4) { %>
+                <div class="drug_list">
+                  <div class="weui-flex">
+                    <div class="weui-flex__item">
+                      医院名称： <span><%=data[k].hospitalName%></span>
+                    </div>
+                  </div>
+                  <% if (data[k].object && data[k].object.recordPrescriptionMedicineList && data[k].object.recordPrescriptionMedicineList.length !== 0) { %>
+                    <% for (var i = 0; i < data[k].object.recordPrescriptionMedicineList.length; i ++) { %>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          药名： <span><%=data[k].object.recordPrescriptionMedicineList[i].name%></span>
+                        </div>
+                      </div>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          用法： <span><%=data[k].object.recordPrescriptionMedicineList[i].method%></span>
+                        </div>
+                      </div>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          用量： <span><%=data[k].object.recordPrescriptionMedicineList[i].dosage%></span>
+                        </div>
+                      </div>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          频度： <span><%=data[k].object.recordPrescriptionMedicineList[i].frequency%></span>
+                        </div>
+                      </div>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          规格： <span><%=data[k].object.recordPrescriptionMedicineList[i].dose%></span>
+                        </div>
+                      </div>
+                      <div class="weui-flex">
+                        <div class="weui-flex__item">
+                          药量： <span><%=data[k].object.recordPrescriptionMedicineList[i].spec%></span>
+                        </div>
+                      </div>
+                    <% } %>
+                  <% } %>
+                  <% if (data[k].recordOrigin === '自传数据') { %>
+                    <div class="weui-cell weui-cell_access source_image">
+                      <div class="weui-cell__bd">
+                          <% if (data[k].medicalRecordPhotoList && data[k].medicalRecordPhotoList.length !== 0) { %>
+                            <% for (var i = 0; i < data[k].medicalRecordPhotoList.length; i ++) { %>
+                              <img class="img-responsive" width="100%" style="display: none;" src="<%=data[k].medicalRecordPhotoList[i].imgUrl%>">
+                            <% } %>
+                          <% } %>
+                      </div>
+                      <div class="weui-cell__ft">查看源照片</div>
+                    </div>
+                  <% } %>
+                </div>
+              <% } %>
+              <% if (data[k].recordHistoryType === 5) { %>
+                <div class="drug_list">
+                  <div class="weui-flex">
+                    <div class="weui-flex__item">
+                      医院： <span><%=data[k].hospitalName%></span>
+                    </div>
+                  </div>
+                  <div class="weui-flex">
+                    <div class="weui-flex__item">
+                      科室： <span><%=data[k].officeName%></span>
+                    </div>
+                  </div>
+                  <% if (data[k].object && data[k].object.content) { %>
+                    <div class="weui-flex">
+                      <div class="weui-flex__item">
+                        诊断： <span><%=data[k].object.content%></span>
+                      </div>
+                    </div>
+                  <% } %>
+                  <% if (data[k].recordOrigin === '自传数据') { %>
+                    <div class="weui-cell weui-cell_access source_image">
+                      <div class="weui-cell__bd">
+                          <% if (data[k].medicalRecordPhotoList && data[k].medicalRecordPhotoList.length !== 0) { %>
+                            <% for (var i = 0; i < data[k].medicalRecordPhotoList.length; i ++) { %>
+                              <img class="img-responsive" width="100%" style="display: none;" src="<%=data[k].medicalRecordPhotoList[i].imgUrl%>">
+                            <% } %>
+                          <% } %>
+                      </div>
+                      <div class="weui-cell__ft">查看源照片</div>
+                    </div>
+                  </div>
+                <% } %>
+                </div>
+              <% } %>
+            </div>
+          <% } %>
+          <div class="weui-cells checkout_more">
+            <a class="weui-cell weui-cell_access checkout_more_href" href="javascript:;" id="showIOSDialog1">
+                <div class="weui-cell__bd"></div>
+                <div class="weui-cell__ft more">
+                  查看更多
+                </div>
+            </a>
+          </div>
+        </div>
+      </div>
+      <% } %>
+    <% } %>
+  </div>
+  <div id="dialogs">
+    <div class="js_dialog" id="iosDialog1" style="display: none;">
+      <div class="weui-mask"></div>
+      <div class="weui-dialog">
+          <div class="weui-dialog__hd"><strong class="weui-dialog__title">查看更多</strong></div>
+          <div class="weui-dialog__bd">微信平台可显示的病史记录条数已达上限。下载APP查看完整病史。</div>
+          <div class="weui-dialog__ft">
+              <a href="javascript:;" class="weui-dialog__btn weui-dialog__btn_default">取消</a>
+              <a href="http://a.app.qq.com/o/simple.jsp?pkgname=com.wondersgroup.hs.pci.patient&fromcase=40003" class="weui-dialog__btn weui-dialog__btn_primary">下载APP</a>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div id="toast" style="display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast toast" >
+        <p class="weui-toast__content"></p>
+    </div>
+  </div>
+</body>
+<script>
+$(document).ready(function(){
+  // 查看图片
+  // $('#uploaderFiles').lightGallery();
+
+  $(".uploaderFiles").on('click', 'li', function() {
+    var imgList = []
+    var src = $(this).children().attr('src');
+    imgList.push(src)
+    $(this).siblings().each(function(index){
+      imgList.push($(this).children().attr('src'))
+    })
+    wx.previewImage({
+      current: src, // 当前显示图片的http链接
+      urls: imgList // 需要预览的图片http链接列表
+    });
+  })
+
+  $(".source_image").on('click', function() {
+    var imgList = []
+    $(this).children('.weui-cell__bd').children('img').each(function(index){
+      imgList.push($(this).attr('src'))
+    })
+    if (imgList.length != 0) {
+      wx.previewImage({
+        current: '', // 当前显示图片的http链接
+        urls: imgList // 需要预览的图片http链接列表
+      });
+    } else {
+      toast('没有照片');
+    }
+  })
+
+  $("#know").on('click',function() {
+    wx.closeWindow();
+  })
+
+  $(document).scroll(function(e) {
+    if($(document).scrollTop() != 0){
+      $(".binding_security").stop();
+      $(".binding_security").animate({"top":"0"});
+    }
+    else{
+      $(".binding_security").stop();
+      $(".binding_security").animate({"top":"0px"});
+    }
+  });
+
+  $('#iosDialog2').on('click', '.weui-dialog__btn', function(){
+    $('#dialogs2').fadeOut(0);
+    wx.closeWindow();
+  });
+
+  // 模态框
+  var $iosDialog1 = $('#iosDialog1');
+  $('#dialogs').on('click', '.weui-dialog__btn', function(){
+      $(this).parents('.js_dialog').fadeOut(0);
+  });
+  $('#showIOSDialog1').on('click', function(){
+      $iosDialog1.fadeIn(0);
+  });
+});
+function toast(msg) {
+  var $toast = $('#toast');
+  $('#toast p').html(msg)
+  $toast.fadeIn(100);
+  setTimeout(function () {
+      $toast.fadeOut(100);
+  }, 1500);
+}
+</script>
+</html>

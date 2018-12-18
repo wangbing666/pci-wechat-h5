@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>风险评估结果</title>
+  <% include ../layout/layout %>
+  <link rel="stylesheet" href="<%=_src('/css/assessment/assessment.css')%>">
+  <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+  <script src="<%=_src('/lib/flexible/rem.min.js')%>"></script>
+  <script type="text/javascript">
+    function toRisk(){
+      window.open("<%=_src('/assessment')%>?v=" + (new Date().getTime()), '_self');
+    }
+    var level = '<%=level%>'
+    var pathName = "<%=_src('')%>"//获取当前Url
+    wxconfig();
+      //ajax请求config配置参数
+    function wxconfig() {
+      $.ajax({
+       type: "get",
+       url: pathName+"/signature",
+       data: {url:location.href},
+       success: function(msg){
+          //配置微信JS-SDK
+        wx.config({
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: msg.appId, // 必填，公众号的唯一标识
+            timestamp:msg.timestamp , // 必填，生成签名的时间戳
+            nonceStr: msg.nonceStr, // 必填，生成签名的随机串
+            signature: msg.signature,// 必填，签名，见附录1
+            jsApiList: ['onMenuShareAppMessage','onMenuShareTimeline'],// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+        });
+       },
+       error:function(err){
+          console.log(err);
+       }
+      });
+    };
+    wx.ready(function () {
+    // 在这里调用 API
+    // 分享给朋友
+      wx.onMenuShareAppMessage({
+          title: '十年心脏病风险预测', // 分享标题
+          desc: "我的风险等级为" + level+ "，你也赶紧来测一测吧！", // 分享描述
+          link: 'http://pci.qcxin.com/pci-wechat-h5/assessment/risk', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          imgUrl: 'http://pci.qcxin.com/pci-wechat-h5/image/assessment/331506325982_.pic_hd.jpg', // 分享图标
+          success: function () { 
+              // 用户确认分享后执行的回调函数
+          },
+          cancel: function () { 
+              // 用户取消分享后执行的回调函数
+          },
+      });
+      // 分享到朋友圈
+      wx.onMenuShareTimeline({
+          title: '十年心脏病风险预测', // 分享标题
+          link: 'http://pci.qcxin.com/pci-wechat-h5/assessment/risk', // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+          imgUrl: 'http://pci.qcxin.com/pci-wechat-h5/image/assessment/331506325982_.pic_hd.jpg', // 分享图
+          success: function () { 
+              // 用户确认分享后执行的回调函数
+          },
+          cancel: function () { 
+              // 用户取消分享后执行的回调函数
+          }
+      });  
+    });
+  </script>
+</head>
+
+<body ontouchstart style="background-color:#f6f6f6">
+  <div class="result">
+    <h3>您的十年心脏病风险等级为</h3>
+    <%if(level == '低') {%>
+    <div class="result-img">
+      <img src="<%=_src('/image/assessment/风险低@3x.png')%>" alt="">
+    </div>
+    <p class="result-jianyi">您的风险等级为低，恭喜您身体状况良好，请继续保持良好的生活习惯。</p>
+    <%}else if(level == '中') {%>
+    <div class="result-img">
+      <img src="<%=_src('/image/assessment/风险中@3x.png')%>" alt="">
+    </div>
+    <p class="result-jianyi">您的风险等级为中，身体状况存在一定风险，建议您注意日常饮食清淡，并加强锻炼。</p>
+    <%}else if(level == '高') {%>
+    <div class="result-img">
+      <img src="<%=_src('/image/assessment/风险高@3x.png')%>" alt="">
+    </div>
+    <p class="result-jianyi">您的风险等级为高，身体状况不甚理想。建议及时咨询医生并谨听医嘱。</p>
+    <%}%>
+    <div class="button-content">
+      <button class="result-btn" onclick="toRisk()">再测一次</button>
+    </div>
+  </div>
+  <div class="qrcode">
+    <img class="QrcodeItem-fakeImage" src="<%=_src('/image/assessment/1011508388884_.pic.jpg')%>" alt="">
+    <div class="qrcode-img">
+      <img src="<%=_src('/image/assessment/1011508388884_.pic.jpg')%>" alt="">
+    </div>
+    <p class="qrcode-text">长按识别二维码并关注公众号</p>
+    <p class="qrcode-text">立即体验更多健康管理服务</p>
+  </div>
+</body>
+
+</html>

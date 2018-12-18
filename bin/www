@@ -1,0 +1,98 @@
+'use strict';
+
+global.config = {
+  userServer: 'http://10.2.10.10/pci-user/',
+  healthServer: 'http://10.2.10.10/pro-health/',
+  server: 'http://10.2.10.10/pci-micro/',
+  fatherServer: 'http://172.18.27.62:8080/pci-operation/',
+  domain: 'http://www.wangbing.ren',
+  root: '/pci-wechat',
+  filedir: '/Users/wangbing/project/pci-wechat-h5',
+  appId: 'wxee8d9fc7f496d8b1',
+  secret:'4ee061a42331ea76af1430e02e4f6fbe'
+}
+
+var app = require('../app');
+var debug = require('debug')('pci-wechat:server');
+var http = require('http');
+
+/**
+ * Get port from environment and store in Express.
+ */
+var port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+var server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+  console.log(`(START) [${new Date()}] Your application is runing on port: ${port} ${global.config.root}/`);
+}
+
+
+

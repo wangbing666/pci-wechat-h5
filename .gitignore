@@ -1,0 +1,20 @@
+# dependencies
+/node_modules
+/dist
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+*.launch
+.settings/
+
+#System Files
+*.DS_Store
+Thumbs.db
+
+*.log
+
+.sass-cache
+
+bin/www-local

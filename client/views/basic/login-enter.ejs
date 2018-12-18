@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <% if (doctor === 'doctor') { %>
+    <title>向医生报到</title>
+  <% } else {%>
+    <title>登录</title>
+  <% } %>
+    <% include ../layout/layout %>
+    <link rel="stylesheet" href="<%=_src('/css/basic/basic.min.css')%>">
+    <script src="<%=_src('/lib/validform/Validform_v5.3.2_min.js')%>"></script>
+    <script>
+      var share = new share("<%= _src('') %>") //jssdk分享页面
+    </script>
+    <style>
+      ul{
+        list-style: none;
+        overflow: hidden;
+        width: 90%;
+        margin: 0 auto;
+      }
+      .navigation{
+        width: 100%;
+        margin: 0 auto 0;
+        padding: 20px 0;
+        color: #35b2f2;
+        font-size: 14px;
+        text-align: center;
+      }
+      .navigation span{
+        text-align: center;
+        width: 24px;
+        display: inline-block;
+        border: 1px solid #35b2f2;
+        border-radius: 12px;
+      }
+    .toast p{
+        margin:0;
+        font-size: 14px;
+        padding: 3px 0;
+    }
+    .toast{
+        position: fixed;
+        z-index: 5000;
+        min-width: 50px;
+        max-width: 300px;
+        min-height: 0;
+        margin-left: 0;
+        top: 80%;
+        left: 50%;
+        padding: 0px 10px;
+        width: auto;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        background-color: rgba(17, 17, 17, 0.7);
+        text-align: center;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .weui-btn_primary:not(.weui-btn_disabled):active{
+        background-color: #ccc; 
+      }
+    </style>
+</head>
+
+<body ontouchstart>
+  <% if (doctor === 'doctor') { %>
+    <div class="weui-flex navigation">
+        <div class="weui-flex__item" style="text-align: center;"><div class="placeholder"><span style="color: #fff;background: #35b2f2;">1</span> 注册登录</div></div>
+        <div  style="text-align: center;"><div class="placeholder">-------></div></div>
+        <div class="weui-flex__item" style="text-align: center;"><div class="placeholder"><span>2</span> 向医生报到</div></div>
+    </div>
+  <% } %>
+  <div class="container">
+    <div class="form-container">
+      <div class="input-field">
+        <div class="weui-cell input-code">
+          <div class="weui-cell__bd">
+            <span class="Validform_label" style="display: none">验证码</span>
+            <input type="tel" name="code" id="code" maxlength="6" placeholder="请输入短信验证码">
+          </div>
+          <div class="weui-cell__hd">
+            <button id="getcode" type="button" class="weui-vcode-btn" onclick="getCode('<%=tel%>')">获取验证码</button>
+          </div>
+        </div>
+        <div class="space">该手机已经注册, 请直接登录</div>
+      </div>
+      <div>
+        <button class="weui-btn weui-btn_primary" disabled>登录</button>
+      </div>
+    </div>
+  </div>
+<!--   <div id="modal" style="display: none">
+    <div class="weui-mask"></div>
+    <div class="weui-dialog">
+      <div class="weui-dialog__hd"><strong class="weui-dialog__title">提示信息</strong></div>
+      <div class="weui-dialog__bd" id="message">
+      </div>
+      <div class="weui-dialog__ft">
+        <span id="close" class="weui-dialog__btn weui-dialog__btn_primary">确定</span>
+      </div>
+    </div>
+  </div> -->
+  <div id="toast" style="display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast toast">
+        <p class="weui-toast__content"></p>
+    </div>
+  </div>
+  <div id="audit_toast" style="display: none;">
+    <div class="weui-mask_transparent"></div>
+    <div class="weui-toast">
+        <i class="weui-loading weui-icon_toast"></i>
+        <p class="weui-toast__content">请求中</p>
+    </div>
+  </div>
+</body>
+
+</html>
+<script>
+var status = "<%=status%>";
+var doctor = "<%=doctor%>";
+var tel = "<%=tel%>";
+var Dotel = "<%=Dotel%>";
+var fbId = "<%=fbId%>";
+var otherRemind = "<%=otherRemind%>";
+var feedbackTimes = "<%=feedbackTimes%>";
+var dn = "<%=dn%>"
+
+$(document).ready(function() {
+  getCode('<%=tel%>'); // 自动获取验证码
+  $(".weui-btn").on('click',function() {
+    var code = $(".input-field input").val()
+    if (code) {
+      if ((/^\d{6}$/).test(code)) {
+        validation(code)
+      } else {
+        toast('请输入正确的6位验证码')
+      }
+    } else {
+      toast('请填写验证码')
+    }
+  })
+  $("#code").on('input', function() {
+    var count = $(this).val().length
+
+    if (count === 6) {
+      $(".weui-btn").attr('disabled',false)
+      $(".weui-btn").css({
+        'background-color': '#35B2F2'
+      })
+    } else {
+      $(".weui-btn").attr('disabled',true)
+      $(".weui-btn").css({
+        'background-color': '#ccc'
+      })
+    }
+  })
+
+  $('#close').on('click', function() {
+    $('#modal').css('display', 'none');
+  });
+});
+
+var count = 60;
+var t;
+
+function getCode(tel) {
+  timedCount();
+  $.post(window.location.pathname + "/getVerifyCode", {mobile: tel}, function(result) {
+    if (result.code === 0) {
+      toast(result.data)
+    } else {
+      var errormsg = JSON.parse(result) && JSON.parse(result).msg || '获取验证码失败';
+      toast(errormsg)
+    }
+  });
+}
+
+function timedCount() {
+  $('#getcode').attr('disabled', 'true');
+  $('#getcode').text(count + '秒后重新获取');
+  count--;
+  t = setTimeout("timedCount()", 1000);
+  if (count < 0) {
+    count = 60;
+    $('#getcode').text('获取验证码');
+    $('#getcode').removeAttr('disabled');
+    clearTimeout(t);
+  }
+}
+
+function validation(code){
+  auditToast()
+  $.ajax({
+    type: 'post',
+    url: "<%=_src('/login/verify')%>?tel=" + tel + "&status=" + status + "&doctor=" + doctor,
+    data: {code:code},
+    success: function(res) {
+      $('#audit_toast').fadeOut(0)
+      if (res.data && res.code === 0) {
+        if (status == 0) {
+          window.location = "<%=_src('/login/success')%>?name="+ res.data.name
+        } else if (status == 1) {
+          window.location = "<%=_src('/uploadCaseHistory')%>"
+        } else if (status == 2) {
+          window.location = "<%=_src('/EMR')%>"
+        } else if (status == 3) {
+          window.location = "<%=_src('/followUp')%>"
+        } else if (status == 4) {
+          window.location = "<%=_src('/find-doctor')%>?doctor=" + doctor
+        } else if (status == 5) {
+          window.location = "<%=_src('/authlist')%>"
+        } else if (status == 6) {
+          window.location = "<%=_src('/followfeedback')%>?fbId=" + fbId + "&otherRemind=" + otherRemind + '&feedbackTimes=' + feedbackTimes + '&dn=' + dn;
+        } else if (status == 7) {
+          window.location = "<%=_src('/family')%>"
+        } else if (status == 8) {
+          window.location = "<%=_src('/find-doctor/check-in')%>?tel=" + Dotel
+        } else if (status == 9) {
+          window.location = "<%=_src('/uploadrecord')%>"
+        }
+      } else {
+        toast(res.err || '请求出错')
+      } 
+    },
+    error:function (err) {
+      console.log(err)
+      $('#audit_toast').fadeOut(0)
+      toast("服务器请求出错")
+    }
+  })
+}
+
+  // 请求中
+ function auditToast() {
+    var $toast = $('#audit_toast');
+    if ($toast.css('display') != 'none') return;
+    $toast.fadeIn(0);
+ }
+
+
+function toast(msg) {
+  var $toast = $('#toast');
+  $('#toast p').html(msg)
+  $toast.fadeIn(100);
+  setTimeout(function () {
+      $toast.fadeOut(100);
+  }, 1500);
+}
+</script>

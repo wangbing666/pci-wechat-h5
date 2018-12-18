@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" style="max-width: 640px;margin:0 auto;">
+<head>
+	<meta charset="UTF-8">
+	<title style="font-size:0.1rem;">父亲节活动</title>
+  	<% include ../layout/layout %>
+  	<link rel="stylesheet" href="<%=_src('/css/father/Share-page.min.css')%>">
+  	<script src="<%=_src('/js/father/rem.min.js')%>"></script>
+  	<script src="<%=_src('/js/father/html2canvas.min.js')%>"></script>
+  	<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+  	<script>
+  		var image = "<%=img%>";
+		var imagepathName = "<%=_src('/image/father')%>";//获取图片全局路径
+  		var pathName = "<%=_src('')%>"//获取当前Url
+  		wxconfig();
+	    //ajax请求config配置参数
+	    function wxconfig() {
+	    	$.ajax({
+			   type: "get",
+			   url: pathName+"/signature",
+			   data: {url:location.href},
+			   success: function(msg){
+			   		//配置微信JS-SDK
+				    wx.config({
+					    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+					    appId: msg.appId, // 必填，公众号的唯一标识
+					    timestamp:msg.timestamp , // 必填，生成签名的时间戳
+					    nonceStr: msg.nonceStr, // 必填，生成签名的随机串
+					    signature: msg.signature,// 必填，签名，见附录1
+					    jsApiList: ['onMenuShareAppMessage','getNetworkType','onMenuShareTimeline','scanQRCode'],// 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+					});
+			   },
+			   error:function(err){
+			   		console.log(err);
+			   }
+			});
+	    };
+  	</script>
+</head>
+<body>
+	<div class="content" id="content">
+		<header></header>
+		<section>
+			<div class="section-content">
+				<span></span>
+				<div class="img"></div>
+				<div class="share-content">
+					<h5><%=appellation%></h5>
+					<p><%=content%></p>
+					<h5 class="signature"><%=signature%></h5>
+				</div>
+			</div>
+			<div class="letter">
+				<img src="<%=_src('/image/father/qrcode.png')%>" alt="">
+			</div>
+		</section>
+		<div class="qrcode">
+			<span>扫码定制父亲节贺卡</span>
+		</div>
+		<footer></footer>
+	</div>
+</body>
+<script src="<%=_src('/js/father/Share-page.min.js')%>"></script>
+</html>

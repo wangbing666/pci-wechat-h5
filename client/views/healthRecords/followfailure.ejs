@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>链接失效</title>
+  <% include ../layout/layout %>
+  <script type="text/javascript">
+    var share = new share("<%=_src('')%>") //jssdk分享页面
+  </script>
+  <style>
+    body{
+      background: #ebebeb;
+      color: #666;
+    }
+    .failure_img{
+      margin: 30px 0;
+      height: 150px;
+      text-align: center;
+    }
+    .failure_img img{
+      height: 150px;
+    }
+    .failure_content{
+      padding: 0 15px;
+    }
+  </style>
+</head>
+
+<body ontouchstart>
+  <div class="follow_failure">
+    <div class="failure_img">
+      <img src="<%=_src('/image/healthRecords/@3xGroup 4.png')%>" alt="">
+    </div>
+    <div class="failure_content">
+      <h4>失效原因：</h4>
+      <p>1.您已在全程心管家APP上完成反馈填写</p>
+      <p>2.您点击的随访反馈通知已过期，请点击最新一条通知完成填写</p>
+    </div>
+  </div>
+</body>
+<script>
+$(document).ready(function(){
+  
+})
+  
+</script>
+</html>

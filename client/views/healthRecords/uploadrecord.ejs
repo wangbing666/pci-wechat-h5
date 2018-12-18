@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>上传记录</title>
+  <% include ../layout/layout %>
+  <script type="text/javascript">
+    var share = new share("<%=_src('')%>") //jssdk分享页面
+  </script>
+  <style>
+    body{
+      background: #ebebeb;
+      color: #666;
+    }
+    .uploadrecord{
+      margin-bottom: 10px;
+    }
+    .weui-cells{
+      margin-top: 0;
+    }
+    .flex{
+      display: flex;
+    }
+    .time{
+      padding: 0 10px;
+    }
+    .status{
+      color: #f90;
+    }
+    .defeated{
+      color: red;
+      font-size: 14px;
+    }
+    ul{
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .uploaderFiles {
+      padding:0;
+      margin:0;
+    }
+  </style>
+</head>
+
+<body>
+  <% if (content.length == 0) { %>
+    <div style="text-align: center;">
+      没有数据
+    </div>
+  <% } else { %>
+    <% for (var i = 0; i < content.length; i ++) { %>
+      <div class="uploadrecord">
+        <div class="weui-cells">
+          <div class="weui-cell">
+            <div class="weui-cell__hd"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA2CAYAAACMRWrdAAAAAXNSR0IArs4c6QAAA9xJREFUaAXtWk9PU0EQn1moSNUED0a96clEEr1goqVAiYonj3wATyZ6UGOM/0BQREw0Jl79CnwDE6EgbT0YEyV65oqejCmvAbrjbOGVfX/6tq/hJa8v3aR5u7Mzs/t7O7Ozb7YIhkJEOFy0/jrYCGY+Z9NvHLSIGiMr5RcS8a6tHonKy9lDJ+12o2d3ow6b/hwAgeiI3VZPRNGjtyOtCzwIUh8fRTPjNcXUjKK48SQWWM0Uc6XKFZLyHCkrAyguDaZLYVZgmkgsFK17YWR8eRG2lzPp9759AcTRojVSJRpAAikEflvM9C51DxXKs9Vq9YkthyCmuB4KWB5A8Cbz1tbR6hMJKywbGhiDus7j3+eFASkJhgsbjwSjvNXqRGIrR3BbMMq+2E6wxYkRQl+yN4+gFzONKMe+02Gd59QWbC7rhAjrZw70Pl1LAYfTndKzBcqVjMUYoJWGj+exbNQUEcOHAdxi1eoXqiTWFBMLzGOKHOOyQysbD8KsuyxVusLwB/B2hx17V9cFt04cWik35YxuwVi3Ef8l1hQ7wGJtej6T82wefLx/eRzTr3x4Y0taJ2uOD8F39Al6gZHYmh9ES2eKe51P89vuOXZ8zP1G4t72mOJ+TXi4YA1zGigTpE8Iyucvpr/YPONEXeulSuDhgLNUm/yF/86WafSMDBifYK6BhPqXud8EJIjHTK8D+7MGKU5RzPnx7tFqB3IjsI6P7b2x9qgldsUi87ETmfQz+LX35eu3zv1nOd2mdeRPY2X8JwVmmY9aQLqMJu6oRgZsHrHKI6lfwzLv0zPfj5s+5NCkxJpiYoE1ZYojK1ZgPCIBcjnT+1q3F5V2lhIGdZqnjrSop9NVgP5dqDz08GkEErTJaXBj1tkITOXlPxU2ZjXdnipKVIdQB7BtkmNMC3whfB2lAnQ9na4CtARpGktlzIzAEmuKHWC8/G1VzD7GKe4cUSoI1THwpp0vZ9KTeYCpILlFjnN8H1cvKkC3MlZdgVYxAlO8eaxtDpqYuapy/sylfg2LDspmamUsW1Z/dnxMfxvtUG/KFPlreCIIjLr7Xcr2OjJbuZKV4wCdDZIDpAUOtsVAnhY7jcB2A/RMsP6aDzqAVaW8yluKKUCrwB4JsI6PBa9Y/HoTu2JmH+N4xH4WeP/FUZgv6p2FN4UJvjiedFKdrd1Y5yTuU8sITI1jmsC0z2QQea/0OZH4sEZCSqwpJhaYxxQJKcdfzJGYR1RKCeiSW7cXGNEoM466GWPdVt7sKgJ2nNxFbu8m/yVWCiBabW8Y3tnz35hXBXSlbnDXj0SsHMdcDjNfD3R33fwPHrctWZlNResAAAAASUVORK5CYII=" alt="" style="width:20px;margin-right:5px;display:block"></div>
+            <div class="weui-cell__bd flex">
+              <div class="time"><%=content[i].updateDate%></div>
+              <div class="status"><%=content[i].statusName%></div> 
+            </div>
+          </div>
+        </div>
+        <div class="weui-cells weui-cells_form" id="uploader">
+           <div class="weui-cell">
+               <div class="weui-cell__bd">
+                   <div class="weui-uploader">
+                       <div class="weui-uploader__bd">
+                           <ul class="weui-uploader__files uploaderFiles">
+                            <% for (var j = 0; j < content[i].imgUrlList.length; j ++) { %>
+                              <li class="weui-uploader__file" style="background-image:url(<%=content[i].imgUrlList[j]%>)"></li>
+                            <% } %>
+                           </ul>                   
+                       </div>
+                   </div>
+               </div>
+           </div>
+        </div>
+        <% if (content[i].failedReason) { %>
+          <div class="weui-cells">
+            <div class="weui-cell defeated">
+              失败原因：<%=content[i].failedReason%>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    <% } %>
+  <% } %>
+</body>
+<script>
+
+$(document).ready(function(){
+  $(".uploaderFiles").on('click', 'li' ,function() {
+    var imgList = [];
+    var src = $(this).css('background-image').replace("url(","").replace(")","");
+    imgList.push(src)
+    $(this).siblings().each(function(index){
+      imgList.push($(this).css('background-image').replace("url(","").replace(")",""))
+    })
+    if (imgList.length != 0) {
+      wx.previewImage({
+        current: src, // 当前显示图片的http链接
+        urls: imgList // 需要预览的图片http链接列表
+      });
+    } else {
+      console.log('没有照片');
+    }
+  })
+})
+  
+</script>
+</html>

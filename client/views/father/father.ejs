@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>父亲节活动</title>
+  <% include ../layout/layout %>
+  <script src="<%=_src('/js/father/rem.min.js')%>"></script>
+  <link rel="stylesheet" href="<%=_src('/css/father/father.min.css')%>">
+</head>
+
+<body>
+	<div class="content">
+		<div class="Grateful-father"></div>
+		<div class="card-envelope"></div>
+		<div class="arrows">
+			<span></span>
+		</div>
+		<div>
+			<a href="<%=_src('/father/make-greetingCard')%>" class="make"></a>
+		</div>
+	</div>
+</body>
+<script>
+    var m = document.documentElement.clientHeight;
+    $(".content").css({'height':m});
+</script>
+</html>
+
